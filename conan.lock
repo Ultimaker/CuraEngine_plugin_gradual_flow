@@ -1,0 +1,173 @@
+{
+ "graph_lock": {
+  "nodes": {
+   "0": {
+    "ref": "curaengine_plugin_gradual_flow/None",
+    "options": "fPIC=True\nshared=False\nabseil:fPIC=True\nabseil:shared=False\nasio-grpc:backend=boost\nasio-grpc:local_allocator=recycling_allocator\nboost:asio_no_deprecated=False\nboost:buildid=None\nboost:bzip2=True\nboost:debug_level=0\nboost:diagnostic_definitions=False\nboost:error_code_header_only=False\nboost:extra_b2_flags=None\nboost:filesystem_no_deprecated=False\nboost:filesystem_use_std_fs=False\nboost:filesystem_version=None\nboost:header_only=True\nboost:i18n_backend=deprecated\nboost:i18n_backend_iconv=libiconv\nboost:i18n_backend_icu=False\nboost:layout=system\nboost:lzma=False\nboost:magic_autolink=False\nboost:multithreading=True\nboost:namespace=boost\nboost:namespace_alias=False\nboost:numa=True\nboost:pch=True\nboost:python_executable=None\nboost:python_version=None\nboost:segmented_stacks=False\nboost:system_no_deprecated=False\nboost:system_use_utf8=False\nboost:visibility=hidden\nboost:with_stacktrace_backtrace=True\nboost:without_atomic=False\nboost:without_chrono=False\nboost:without_container=False\nboost:without_context=False\nboost:without_contract=False\nboost:without_coroutine=False\nboost:without_date_time=False\nboost:without_exception=False\nboost:without_fiber=False\nboost:without_filesystem=False\nboost:without_graph=False\nboost:without_graph_parallel=True\nboost:without_iostreams=False\nboost:without_json=False\nboost:without_locale=False\nboost:without_log=False\nboost:without_math=False\nboost:without_mpi=True\nboost:without_nowide=False\nboost:without_program_options=False\nboost:without_python=True\nboost:without_random=False\nboost:without_regex=False\nboost:without_serialization=False\nboost:without_stacktrace=False\nboost:without_system=False\nboost:without_test=False\nboost:without_thread=False\nboost:without_timer=False\nboost:without_type_erasure=False\nboost:without_url=False\nboost:without_wave=False\nboost:zlib=True\nboost:zstd=False\nc-ares:fPIC=True\nc-ares:shared=False\nc-ares:tools=True\nclipper:fPIC=True\nclipper:shared=False\ncuraengine_grpc_definitions:fPIC=True\ncuraengine_grpc_definitions:shared=False\ndocopt.cpp:boost_regex=False\ndocopt.cpp:fPIC=True\ndocopt.cpp:shared=False\nfmt:fPIC=True\nfmt:header_only=False\nfmt:shared=False\nfmt:with_fmt_alias=False\nfmt:with_os_api=True\ngrpc:codegen=True\ngrpc:cpp_plugin=True\ngrpc:csharp_ext=False\ngrpc:csharp_plugin=False\ngrpc:fPIC=True\ngrpc:node_plugin=False\ngrpc:objective_c_plugin=False\ngrpc:php_plugin=False\ngrpc:python_plugin=False\ngrpc:ruby_plugin=False\ngrpc:secure=False\ngrpc:shared=False\nopenssl:386=False\nopenssl:enable_weak_ssl_ciphers=False\nopenssl:fPIC=True\nopenssl:no_aria=False\nopenssl:no_asm=False\nopenssl:no_async=False\nopenssl:no_bf=False\nopenssl:no_blake2=False\nopenssl:no_camellia=False\nopenssl:no_cast=False\nopenssl:no_chacha=False\nopenssl:no_cms=False\nopenssl:no_comp=False\nopenssl:no_ct=False\nopenssl:no_deprecated=False\nopenssl:no_des=False\nopenssl:no_dgram=False\nopenssl:no_dh=False\nopenssl:no_dsa=False\nopenssl:no_dso=False\nopenssl:no_ec=False\nopenssl:no_ecdh=False\nopenssl:no_ecdsa=False\nopenssl:no_engine=False\nopenssl:no_filenames=False\nopenssl:no_gost=False\nopenssl:no_hmac=False\nopenssl:no_idea=False\nopenssl:no_md4=False\nopenssl:no_md5=False\nopenssl:no_mdc2=False\nopenssl:no_ocsp=False\nopenssl:no_pinshared=False\nopenssl:no_rc2=False\nopenssl:no_rfc3779=False\nopenssl:no_rmd160=False\nopenssl:no_rsa=False\nopenssl:no_seed=False\nopenssl:no_sha=False\nopenssl:no_sm2=False\nopenssl:no_sm3=False\nopenssl:no_sm4=False\nopenssl:no_sock=False\nopenssl:no_srp=False\nopenssl:no_srtp=False\nopenssl:no_sse2=False\nopenssl:no_ssl=False\nopenssl:no_ssl3=False\nopenssl:no_stdio=False\nopenssl:no_tests=False\nopenssl:no_threads=False\nopenssl:no_tls1=False\nopenssl:no_ts=False\nopenssl:no_whirlpool=False\nopenssl:openssldir=None\nopenssl:shared=False\nprotobuf:debug_suffix=True\nprotobuf:fPIC=True\nprotobuf:lite=False\nprotobuf:shared=False\nprotobuf:with_rtti=True\nprotobuf:with_zlib=True\nre2:fPIC=True\nre2:shared=False\nre2:with_icu=False\nspdlog:fPIC=True\nspdlog:header_only=False\nspdlog:no_exceptions=False\nspdlog:shared=False\nspdlog:wchar_filenames=False\nspdlog:wchar_support=False\nzlib:fPIC=True\nzlib:shared=False",
+    "requires": [
+     "1",
+     "3",
+     "4",
+     "8",
+     "10",
+     "12",
+     "13",
+     "14",
+     "15",
+     "16",
+     "17"
+    ],
+    "path": "conanfile.py",
+    "context": "host"
+   },
+   "1": {
+    "ref": "protobuf/3.21.9#515ceb0a1653cf84363d9968b812d6be",
+    "options": "debug_suffix=True\nfPIC=True\nlite=False\nshared=False\nwith_rtti=True\nwith_zlib=True\nzlib:fPIC=True\nzlib:shared=False",
+    "package_id": "b4583e49787ba9c16a92b594cc3a89107266db33",
+    "prev": "3fae83c3cd5810e1122f17c5ce1b7047",
+    "requires": [
+     "2"
+    ],
+    "context": "host"
+   },
+   "2": {
+    "ref": "zlib/1.2.13#13c96f538b52e1600c40b88994de240f",
+    "options": "fPIC=True\nshared=False",
+    "package_id": "6bfe84f85e7c10bcc5faaea768689942159f07e4",
+    "prev": "74298ed6f850d5298b7a8319e09d3c4a",
+    "context": "host"
+   },
+   "3": {
+    "ref": "boost/1.82.0#902463606663219fc8c6d2102f1b8c6a",
+    "options": "asio_no_deprecated=False\nbuildid=None\nbzip2=True\ndebug_level=0\ndiagnostic_definitions=False\nerror_code_header_only=False\nextra_b2_flags=None\nfilesystem_no_deprecated=False\nfilesystem_use_std_fs=False\nfilesystem_version=None\nheader_only=True\ni18n_backend=deprecated\ni18n_backend_iconv=libiconv\ni18n_backend_icu=False\nlayout=system\nlzma=False\nmagic_autolink=False\nmultithreading=True\nnamespace=boost\nnamespace_alias=False\nnuma=True\npch=True\npython_executable=None\npython_version=None\nsegmented_stacks=False\nsystem_no_deprecated=False\nsystem_use_utf8=False\nvisibility=hidden\nwith_stacktrace_backtrace=True\nwithout_atomic=False\nwithout_chrono=False\nwithout_container=False\nwithout_context=False\nwithout_contract=False\nwithout_coroutine=False\nwithout_date_time=False\nwithout_exception=False\nwithout_fiber=False\nwithout_filesystem=False\nwithout_graph=False\nwithout_graph_parallel=True\nwithout_iostreams=False\nwithout_json=False\nwithout_locale=False\nwithout_log=False\nwithout_math=False\nwithout_mpi=True\nwithout_nowide=False\nwithout_program_options=False\nwithout_python=True\nwithout_random=False\nwithout_regex=False\nwithout_serialization=False\nwithout_stacktrace=False\nwithout_system=False\nwithout_test=False\nwithout_thread=False\nwithout_timer=False\nwithout_type_erasure=False\nwithout_url=False\nwithout_wave=False\nzlib=True\nzstd=False",
+    "package_id": "5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9",
+    "prev": "fdd6fabc7d30d5c6f60fbf9f005f17e9",
+    "context": "host"
+   },
+   "4": {
+    "ref": "asio-grpc/2.6.0#a53a448bd89332863dd7dc497c1190f7",
+    "options": "backend=boost\nlocal_allocator=recycling_allocator\nabseil:fPIC=True\nabseil:shared=False\nboost:asio_no_deprecated=False\nboost:buildid=None\nboost:bzip2=True\nboost:debug_level=0\nboost:diagnostic_definitions=False\nboost:error_code_header_only=False\nboost:extra_b2_flags=None\nboost:filesystem_no_deprecated=False\nboost:filesystem_use_std_fs=False\nboost:filesystem_version=None\nboost:header_only=True\nboost:i18n_backend=deprecated\nboost:i18n_backend_iconv=libiconv\nboost:i18n_backend_icu=False\nboost:layout=system\nboost:lzma=False\nboost:magic_autolink=False\nboost:multithreading=True\nboost:namespace=boost\nboost:namespace_alias=False\nboost:numa=True\nboost:pch=True\nboost:python_executable=None\nboost:python_version=None\nboost:segmented_stacks=False\nboost:system_no_deprecated=False\nboost:system_use_utf8=False\nboost:visibility=hidden\nboost:with_stacktrace_backtrace=True\nboost:without_atomic=False\nboost:without_chrono=False\nboost:without_container=False\nboost:without_context=False\nboost:without_contract=False\nboost:without_coroutine=False\nboost:without_date_time=False\nboost:without_exception=False\nboost:without_fiber=False\nboost:without_filesystem=False\nboost:without_graph=False\nboost:without_graph_parallel=True\nboost:without_iostreams=False\nboost:without_json=False\nboost:without_locale=False\nboost:without_log=False\nboost:without_math=False\nboost:without_mpi=True\nboost:without_nowide=False\nboost:without_program_options=False\nboost:without_python=True\nboost:without_random=False\nboost:without_regex=False\nboost:without_serialization=False\nboost:without_stacktrace=False\nboost:without_system=False\nboost:without_test=False\nboost:without_thread=False\nboost:without_timer=False\nboost:without_type_erasure=False\nboost:without_url=False\nboost:without_wave=False\nboost:zlib=True\nboost:zstd=False\nc-ares:fPIC=True\nc-ares:shared=False\nc-ares:tools=True\ngrpc:codegen=True\ngrpc:cpp_plugin=True\ngrpc:csharp_ext=False\ngrpc:csharp_plugin=False\ngrpc:fPIC=True\ngrpc:node_plugin=False\ngrpc:objective_c_plugin=False\ngrpc:php_plugin=False\ngrpc:python_plugin=False\ngrpc:ruby_plugin=False\ngrpc:secure=False\ngrpc:shared=False\nopenssl:386=False\nopenssl:enable_weak_ssl_ciphers=False\nopenssl:fPIC=True\nopenssl:no_aria=False\nopenssl:no_asm=False\nopenssl:no_async=False\nopenssl:no_bf=False\nopenssl:no_blake2=False\nopenssl:no_camellia=False\nopenssl:no_cast=False\nopenssl:no_chacha=False\nopenssl:no_cms=False\nopenssl:no_comp=False\nopenssl:no_ct=False\nopenssl:no_deprecated=False\nopenssl:no_des=False\nopenssl:no_dgram=False\nopenssl:no_dh=False\nopenssl:no_dsa=False\nopenssl:no_dso=False\nopenssl:no_ec=False\nopenssl:no_ecdh=False\nopenssl:no_ecdsa=False\nopenssl:no_engine=False\nopenssl:no_filenames=False\nopenssl:no_gost=False\nopenssl:no_hmac=False\nopenssl:no_idea=False\nopenssl:no_md4=False\nopenssl:no_md5=False\nopenssl:no_mdc2=False\nopenssl:no_ocsp=False\nopenssl:no_pinshared=False\nopenssl:no_rc2=False\nopenssl:no_rfc3779=False\nopenssl:no_rmd160=False\nopenssl:no_rsa=False\nopenssl:no_seed=False\nopenssl:no_sha=False\nopenssl:no_sm2=False\nopenssl:no_sm3=False\nopenssl:no_sm4=False\nopenssl:no_sock=False\nopenssl:no_srp=False\nopenssl:no_srtp=False\nopenssl:no_sse2=False\nopenssl:no_ssl=False\nopenssl:no_ssl3=False\nopenssl:no_stdio=False\nopenssl:no_tests=False\nopenssl:no_threads=False\nopenssl:no_tls1=False\nopenssl:no_ts=False\nopenssl:no_whirlpool=False\nopenssl:openssldir=None\nopenssl:shared=False\nprotobuf:debug_suffix=True\nprotobuf:fPIC=True\nprotobuf:lite=False\nprotobuf:shared=False\nprotobuf:with_rtti=True\nprotobuf:with_zlib=True\nre2:fPIC=True\nre2:shared=False\nre2:with_icu=False\nzlib:fPIC=True\nzlib:shared=False",
+    "package_id": "bb6442aba7a6e403c16a912f65317abff8542491",
+    "prev": "2c76bf5f1be6869d2b1610f47c6b58a1",
+    "requires": [
+     "5",
+     "3"
+    ],
+    "context": "host"
+   },
+   "5": {
+    "ref": "grpc/1.50.1#01c169a35963fcf8fca63a6f67a7e592",
+    "options": "codegen=True\ncpp_plugin=True\ncsharp_ext=False\ncsharp_plugin=False\nfPIC=True\nnode_plugin=False\nobjective_c_plugin=False\nphp_plugin=False\npython_plugin=False\nruby_plugin=False\nsecure=False\nshared=False\nabseil:fPIC=True\nabseil:shared=False\nc-ares:fPIC=True\nc-ares:shared=False\nc-ares:tools=True\nopenssl:386=False\nopenssl:enable_weak_ssl_ciphers=False\nopenssl:fPIC=True\nopenssl:no_aria=False\nopenssl:no_asm=False\nopenssl:no_async=False\nopenssl:no_bf=False\nopenssl:no_blake2=False\nopenssl:no_camellia=False\nopenssl:no_cast=False\nopenssl:no_chacha=False\nopenssl:no_cms=False\nopenssl:no_comp=False\nopenssl:no_ct=False\nopenssl:no_deprecated=False\nopenssl:no_des=False\nopenssl:no_dgram=False\nopenssl:no_dh=False\nopenssl:no_dsa=False\nopenssl:no_dso=False\nopenssl:no_ec=False\nopenssl:no_ecdh=False\nopenssl:no_ecdsa=False\nopenssl:no_engine=False\nopenssl:no_filenames=False\nopenssl:no_gost=False\nopenssl:no_hmac=False\nopenssl:no_idea=False\nopenssl:no_md4=False\nopenssl:no_md5=False\nopenssl:no_mdc2=False\nopenssl:no_ocsp=False\nopenssl:no_pinshared=False\nopenssl:no_rc2=False\nopenssl:no_rfc3779=False\nopenssl:no_rmd160=False\nopenssl:no_rsa=False\nopenssl:no_seed=False\nopenssl:no_sha=False\nopenssl:no_sm2=False\nopenssl:no_sm3=False\nopenssl:no_sm4=False\nopenssl:no_sock=False\nopenssl:no_srp=False\nopenssl:no_srtp=False\nopenssl:no_sse2=False\nopenssl:no_ssl=False\nopenssl:no_ssl3=False\nopenssl:no_stdio=False\nopenssl:no_tests=False\nopenssl:no_threads=False\nopenssl:no_tls1=False\nopenssl:no_ts=False\nopenssl:no_whirlpool=False\nopenssl:openssldir=None\nopenssl:shared=False\nprotobuf:debug_suffix=True\nprotobuf:fPIC=True\nprotobuf:lite=False\nprotobuf:shared=False\nprotobuf:with_rtti=True\nprotobuf:with_zlib=True\nre2:fPIC=True\nre2:shared=False\nre2:with_icu=False\nzlib:fPIC=True\nzlib:shared=False",
+    "package_id": "88bcad26a716dda9bc7b81e8dc6120adcce8f177",
+    "prev": "9a06e9d46d545b80702066b99d9cb8dd",
+    "requires": [
+     "6",
+     "7",
+     "8",
+     "9",
+     "2",
+     "1"
+    ],
+    "context": "host"
+   },
+   "6": {
+    "ref": "abseil/20220623.0#e182627de3e5bda7220302d5f69a37cd",
+    "options": "fPIC=True\nshared=False",
+    "package_id": "42c761abaafd5bb019de57e8b434b1569b4f64e7",
+    "prev": "10fa8b7ba88694155a15579a2b7d4e88",
+    "context": "host"
+   },
+   "7": {
+    "ref": "c-ares/1.19.0#3d781213ee5d4736b3e5a0a040c22a92",
+    "options": "fPIC=True\nshared=False\ntools=True",
+    "package_id": "3e955d65b53e091e6efeebbc32c66792304e560d",
+    "prev": "38ec0c06c3125c720d19f2f18678c923",
+    "context": "host"
+   },
+   "8": {
+    "ref": "openssl/1.1.1l#de73a8aad9d5a14da8ed43b40592195a",
+    "options": "386=False\nenable_weak_ssl_ciphers=False\nfPIC=True\nno_aria=False\nno_asm=False\nno_async=False\nno_bf=False\nno_blake2=False\nno_camellia=False\nno_cast=False\nno_chacha=False\nno_cms=False\nno_comp=False\nno_ct=False\nno_deprecated=False\nno_des=False\nno_dgram=False\nno_dh=False\nno_dsa=False\nno_dso=False\nno_ec=False\nno_ecdh=False\nno_ecdsa=False\nno_engine=False\nno_filenames=False\nno_gost=False\nno_hmac=False\nno_idea=False\nno_md4=False\nno_md5=False\nno_mdc2=False\nno_ocsp=False\nno_pinshared=False\nno_rc2=False\nno_rfc3779=False\nno_rmd160=False\nno_rsa=False\nno_seed=False\nno_sha=False\nno_sm2=False\nno_sm3=False\nno_sm4=False\nno_sock=False\nno_srp=False\nno_srtp=False\nno_sse2=False\nno_ssl=False\nno_ssl3=False\nno_stdio=False\nno_tests=False\nno_threads=False\nno_tls1=False\nno_ts=False\nno_whirlpool=False\nopenssldir=None\nshared=False",
+    "package_id": "6bfe84f85e7c10bcc5faaea768689942159f07e4",
+    "prev": "0270bbcf41c9a4cd53843c1b5629676f",
+    "context": "host"
+   },
+   "9": {
+    "ref": "re2/20230301#56bcddd1eaca2b093fd34525ae40ee9b",
+    "options": "fPIC=True\nshared=False\nwith_icu=False",
+    "package_id": "42c761abaafd5bb019de57e8b434b1569b4f64e7",
+    "prev": "4d8b146735ab5013d45aab982a284719",
+    "context": "host"
+   },
+   "10": {
+    "ref": "spdlog/1.11.0#8b4bd1da26e0ec97698369d6224d93bf",
+    "options": "fPIC=True\nheader_only=False\nno_exceptions=False\nshared=False\nwchar_filenames=False\nwchar_support=False\nfmt:fPIC=True\nfmt:header_only=False\nfmt:shared=False\nfmt:with_fmt_alias=False\nfmt:with_os_api=True",
+    "package_id": "5e429bd9d6f349539de27f58cba2cd901a12e9b9",
+    "prev": "97adcdfd26af25085d9837b3d2d6d4a4",
+    "requires": [
+     "11"
+    ],
+    "context": "host"
+   },
+   "11": {
+    "ref": "fmt/10.0.0#dd5e3eb81b512a1bb34a5aab88a07e82",
+    "options": "fPIC=True\nheader_only=False\nshared=False\nwith_fmt_alias=False\nwith_os_api=True",
+    "package_id": "c369abcd755bc740be5e94489f862076e89b464b",
+    "prev": "8a6791b28f092ef9dc913d0ffebaedd0",
+    "context": "host"
+   },
+   "12": {
+    "ref": "docopt.cpp/0.6.3#62d9ca086a4956ad969bd102e346f736",
+    "options": "boost_regex=False\nfPIC=True\nshared=False",
+    "package_id": "42c761abaafd5bb019de57e8b434b1569b4f64e7",
+    "prev": "9f5a4e1cc2552966f7001cfeedaf21ce",
+    "context": "host"
+   },
+   "13": {
+    "ref": "range-v3/0.12.0#ef25fe38953fd3847f5bf0dabe1df122",
+    "options": "",
+    "package_id": "5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9",
+    "prev": "78bf3acfef1869ff3bf58f762e53cc34",
+    "context": "host"
+   },
+   "14": {
+    "ref": "clipper/6.4.2#4a99df8ff37476a0108cabee338a3cf2",
+    "options": "fPIC=True\nshared=False",
+    "package_id": "42c761abaafd5bb019de57e8b434b1569b4f64e7",
+    "prev": "8550632f2c5b74ce2a1424797250eaaa",
+    "context": "host"
+   },
+   "15": {
+    "ref": "ctre/3.7.2#86bd3592feebcdafd2ab7b8a1aad0c80",
+    "options": "",
+    "package_id": "5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9",
+    "prev": "76c661947cae60f706ab7c3dc0763f74",
+    "context": "host"
+   },
+   "16": {
+    "ref": "neargye-semver/0.3.0#062aee0a7bf6c6aff702580ec695544a",
+    "options": "",
+    "package_id": "5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9",
+    "prev": "4369e100d3e6b8a8e5799450ed8bb9b9",
+    "context": "host"
+   },
+   "17": {
+    "ref": "curaengine_grpc_definitions/0.1.0-alpha+cura_10446_d38078@ultimaker/cura_10446#c6ade2009d07fb4b998f9da9272d32a4",
+    "options": "fPIC=True\nshared=False\nabseil:fPIC=True\nabseil:shared=False\nasio-grpc:backend=boost\nasio-grpc:local_allocator=recycling_allocator\nboost:asio_no_deprecated=False\nboost:buildid=None\nboost:bzip2=True\nboost:debug_level=0\nboost:diagnostic_definitions=False\nboost:error_code_header_only=False\nboost:extra_b2_flags=None\nboost:filesystem_no_deprecated=False\nboost:filesystem_use_std_fs=False\nboost:filesystem_version=None\nboost:header_only=True\nboost:i18n_backend=deprecated\nboost:i18n_backend_iconv=libiconv\nboost:i18n_backend_icu=False\nboost:layout=system\nboost:lzma=False\nboost:magic_autolink=False\nboost:multithreading=True\nboost:namespace=boost\nboost:namespace_alias=False\nboost:numa=True\nboost:pch=True\nboost:python_executable=None\nboost:python_version=None\nboost:segmented_stacks=False\nboost:system_no_deprecated=False\nboost:system_use_utf8=False\nboost:visibility=hidden\nboost:with_stacktrace_backtrace=True\nboost:without_atomic=False\nboost:without_chrono=False\nboost:without_container=False\nboost:without_context=False\nboost:without_contract=False\nboost:without_coroutine=False\nboost:without_date_time=False\nboost:without_exception=False\nboost:without_fiber=False\nboost:without_filesystem=False\nboost:without_graph=False\nboost:without_graph_parallel=True\nboost:without_iostreams=False\nboost:without_json=False\nboost:without_locale=False\nboost:without_log=False\nboost:without_math=False\nboost:without_mpi=True\nboost:without_nowide=False\nboost:without_program_options=False\nboost:without_python=True\nboost:without_random=False\nboost:without_regex=False\nboost:without_serialization=False\nboost:without_stacktrace=False\nboost:without_system=False\nboost:without_test=False\nboost:without_thread=False\nboost:without_timer=False\nboost:without_type_erasure=False\nboost:without_url=False\nboost:without_wave=False\nboost:zlib=True\nboost:zstd=False\nc-ares:fPIC=True\nc-ares:shared=False\nc-ares:tools=True\ngrpc:codegen=True\ngrpc:cpp_plugin=True\ngrpc:csharp_ext=False\ngrpc:csharp_plugin=False\ngrpc:fPIC=True\ngrpc:node_plugin=False\ngrpc:objective_c_plugin=False\ngrpc:php_plugin=False\ngrpc:python_plugin=False\ngrpc:ruby_plugin=False\ngrpc:secure=False\ngrpc:shared=False\nopenssl:386=False\nopenssl:enable_weak_ssl_ciphers=False\nopenssl:fPIC=True\nopenssl:no_aria=False\nopenssl:no_asm=False\nopenssl:no_async=False\nopenssl:no_bf=False\nopenssl:no_blake2=False\nopenssl:no_camellia=False\nopenssl:no_cast=False\nopenssl:no_chacha=False\nopenssl:no_cms=False\nopenssl:no_comp=False\nopenssl:no_ct=False\nopenssl:no_deprecated=False\nopenssl:no_des=False\nopenssl:no_dgram=False\nopenssl:no_dh=False\nopenssl:no_dsa=False\nopenssl:no_dso=False\nopenssl:no_ec=False\nopenssl:no_ecdh=False\nopenssl:no_ecdsa=False\nopenssl:no_engine=False\nopenssl:no_filenames=False\nopenssl:no_gost=False\nopenssl:no_hmac=False\nopenssl:no_idea=False\nopenssl:no_md4=False\nopenssl:no_md5=False\nopenssl:no_mdc2=False\nopenssl:no_ocsp=False\nopenssl:no_pinshared=False\nopenssl:no_rc2=False\nopenssl:no_rfc3779=False\nopenssl:no_rmd160=False\nopenssl:no_rsa=False\nopenssl:no_seed=False\nopenssl:no_sha=False\nopenssl:no_sm2=False\nopenssl:no_sm3=False\nopenssl:no_sm4=False\nopenssl:no_sock=False\nopenssl:no_srp=False\nopenssl:no_srtp=False\nopenssl:no_sse2=False\nopenssl:no_ssl=False\nopenssl:no_ssl3=False\nopenssl:no_stdio=False\nopenssl:no_tests=False\nopenssl:no_threads=False\nopenssl:no_tls1=False\nopenssl:no_ts=False\nopenssl:no_whirlpool=False\nopenssl:openssldir=None\nopenssl:shared=False\nprotobuf:debug_suffix=True\nprotobuf:fPIC=True\nprotobuf:lite=False\nprotobuf:shared=False\nprotobuf:with_rtti=True\nprotobuf:with_zlib=True\nre2:fPIC=True\nre2:shared=False\nre2:with_icu=False\nzlib:fPIC=True\nzlib:shared=False",
+    "package_id": "d87b8a1a56fdde6f1f4a95f2a1785f4702a3e1d5",
+    "prev": "19eaa4572876393d4364da6755ff6ed1",
+    "requires": [
+     "1",
+     "3",
+     "4",
+     "5",
+     "8"
+    ],
+    "context": "host"
+   }
+  },
+  "revisions_enabled": true
+ },
+ "version": "0.4",
+ "profile_host": "[settings]\narch=armv8\narch_build=armv8\nbuild_type=Debug\ncompiler=apple-clang\ncompiler.cppstd=17\ncompiler.libcxx=libc++\ncompiler.version=14\nos=Macos\nos_build=Macos\ncuraengine:compiler.cppstd=20\ncuraengine*:compiler.cppstd=20\ncuraengine_plugin_infill_generate:compiler.cppstd=20\nscripta:compiler.cppstd=20\numspatial*:compiler.cppstd=20\n[options]\n[build_requires]\n[env]\n[conf]\ntools.cmake.cmaketoolchain:generator=Ninja\ntools.env.virtualenv:auto_use=True\ntools.gnu:define_libcxx11_abi=True\n",
+ "profile_build": "[settings]\narch=armv8\narch_build=armv8\nbuild_type=Release\ncompiler=apple-clang\ncompiler.cppstd=17\ncompiler.libcxx=libc++\ncompiler.version=14\nos=Macos\nos_build=Macos\n[options]\n[build_requires]\n[env]\n[conf]\ntools.cmake.cmaketoolchain:generator=Ninja\ntools.env.virtualenv:auto_use=True\ntools.gnu:define_libcxx11_abi=True\n"
+}
