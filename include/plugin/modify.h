@@ -8,6 +8,7 @@
 #include <boost/asio/awaitable.hpp>
 #include <spdlog/spdlog.h>
 
+#include <coroutine>
 #include <filesystem>
 #include <memory>
 
@@ -47,6 +48,14 @@ struct Generate
                 status = grpc::Status(grpc::StatusCode::INTERNAL, static_cast<std::string>(e.what()));
             }
 
+            if (! status.ok())
+            {
+                co_await agrpc::finish_with_error(writer, status, boost::asio::use_awaitable);
+            }
+            else
+            {
+                continue;
+            }
             co_await agrpc::finish(writer, response, status, boost::asio::use_awaitable);
         }
     }
