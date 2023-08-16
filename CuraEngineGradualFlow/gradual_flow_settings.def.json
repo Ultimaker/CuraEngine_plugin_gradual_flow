@@ -1,0 +1,13 @@
+{
+  "speed": {
+    "children": {
+      "gradual_flow_change": {
+        "label": "Gradual flow change",
+        "description": "Enable gradual flow changes",
+        "type": "bool",
+        "default_value": true,
+        "settable_per_mesh": true
+      }
+    }
+  }
+}
