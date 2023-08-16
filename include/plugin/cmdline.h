@@ -9,7 +9,7 @@
 namespace plugin::cmdline
 {
 
-constexpr std::string_view NAME = "GradualFlowPlugin";
+constexpr std::string_view NAME = "CuraEngineGradualFlow";
 constexpr std::string_view VERSION = "0.1.0";
 static const auto VERSION_ID = fmt::format(FMT_COMPILE("{} {}"), NAME, VERSION);
 

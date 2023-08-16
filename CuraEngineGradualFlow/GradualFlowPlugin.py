@@ -9,6 +9,7 @@ from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.i18n import i18nCatalog
 from cura.BackendPlugin import BackendPlugin
 
+
 catalog = i18nCatalog("cura")
 
 

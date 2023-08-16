@@ -2,13 +2,14 @@
 # Cura is released under the terms of the LGPLv3 or higher.
 
 import platform
+from UM.i18n import i18nCatalog
 
+
+catalog = i18nCatalog("cura")
 
 if platform.machine() in ["AMD64", "x86_64"]:
     from . import GradualFlowPlugin
 
-    from UM.i18n import i18nCatalog
-    catalog = i18nCatalog("cura")
 
     def getMetaData():
         return {}
@@ -17,6 +18,7 @@ if platform.machine() in ["AMD64", "x86_64"]:
         return { "backend_plugin":  GradualFlowPlugin.GradualFlowPlugin() }
 else:
     from UM.Logger import Logger
+
     Logger.error("CuraEngineGradualFlow plugin is only supported on x86_64 systems")
 
     def getMetaData():
