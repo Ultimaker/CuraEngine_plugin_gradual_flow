@@ -51,9 +51,6 @@ struct Generate
             if (! status.ok())
             {
                 co_await agrpc::finish_with_error(writer, status, boost::asio::use_awaitable);
-            }
-            else
-            {
                 continue;
             }
             co_await agrpc::finish(writer, response, status, boost::asio::use_awaitable);
