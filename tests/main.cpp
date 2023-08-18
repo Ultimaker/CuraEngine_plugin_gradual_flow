@@ -266,7 +266,7 @@ TEST_CASE("flow limit forward backward target speed not reached")
 {
     // relatively long path with a high target speed in the middle with at
     // both ends a lower target speed. The flow should increase and decrease
-    // since the flow acceleration is set relatively low (1mm^3/s^2) the
+    // since the flow acceleration is set relatively low (3mm^3/s^2) the
     // target flow is not reached
     const auto original_gcode_path_data_100mm_s = mock_msg(100); // 100mm/s
     const auto original_gcode_path_data_10mm_s = mock_msg(10); // 10mm/s
