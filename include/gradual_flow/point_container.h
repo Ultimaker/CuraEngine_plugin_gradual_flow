@@ -33,7 +33,7 @@ struct point_container : public std::vector<P>
     inline static constexpr direction winding = Direction;
 
     constexpr point_container() noexcept = default;
-    constexpr explicit point_container(std::initializer_list<P> points) noexcept : std::vector<P>(points)
+    constexpr point_container(std::initializer_list<P> points) noexcept : std::vector<P>(points)
     {
     }
 };
@@ -42,7 +42,7 @@ template<concepts::point P = Point>
 struct polyline : public point_container<P, false, direction::NA>
 {
     constexpr polyline() noexcept = default;
-    constexpr explicit polyline(std::initializer_list<P> points) noexcept : point_container<P, false, direction::NA>(points)
+    constexpr polyline(std::initializer_list<P> points) noexcept : point_container<P, false, direction::NA>(points)
     {
     }
 };
@@ -63,7 +63,7 @@ template<concepts::point P = Point>
 struct polygon_outer : public point_container<P, true, direction::CW>
 {
     constexpr polygon_outer() noexcept = default;
-    constexpr explicit polygon_outer(std::initializer_list<P> points) noexcept : point_container<P, true, direction::CW>(points)
+    constexpr polygon_outer(std::initializer_list<P> points) noexcept : point_container<P, true, direction::CW>(points)
     {
     }
 };
@@ -75,7 +75,7 @@ template<concepts::point P = Point>
 struct polygon_inner : public point_container<P, true, direction::CCW>
 {
     constexpr polygon_inner() noexcept = default;
-    constexpr explicit polygon_inner(std::initializer_list<P> points) noexcept : point_container<P, true, direction::CCW>(points)
+    constexpr polygon_inner(std::initializer_list<P> points) noexcept : point_container<P, true, direction::CCW>(points)
     {
     }
 };
@@ -87,7 +87,7 @@ template<concepts::point P = Point>
 struct polygons : public std::vector<polygon<P, direction::NA>*>
 {
     constexpr polygons() noexcept = default;
-    constexpr explicit polygons(std::initializer_list<polygon<P, direction::NA>*> polygons) noexcept : std::vector<polygon<P, direction::NA>*>(polygons)
+    constexpr polygons(std::initializer_list<polygon<P, direction::NA>*> polygons) noexcept : std::vector<polygon<P, direction::NA>*>(polygons)
     {
     }
 

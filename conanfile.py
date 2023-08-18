@@ -25,10 +25,12 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
+        "enable_testing": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
+        "enable_testing": False,
     }
 
     @property
@@ -77,6 +79,10 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self.requires("neargye-semver/0.3.0")
         self.requires("curaengine_grpc_definitions/latest@ultimaker/cura_10446")
 
+    def build_requirements(self):
+        if self.options.enable_testing:
+            self.test_requires("catch2/[>=2.13.8]")
+
     def validate(self):
         # validate the minimum cpp standard supported. For C++ projects only
         if self.settings.compiler.cppstd:
@@ -94,6 +100,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     def generate(self):
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
+        tc.variables["ENABLE_TESTS"] = self.options.enable_testing
         # Boolean values are preferred instead of "ON"/"OFF"
         if is_msvc(self):
             tc.variables["USE_MSVC_RUNTIME_LIBRARY_DLL"] = not is_msvc_static_runtime(self)
