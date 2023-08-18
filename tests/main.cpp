@@ -224,7 +224,8 @@ TEST_CASE("flow limit forward backward target speed reached")
 {
     // relatively long path with a high target speed in the middle with at
     // both ends a lower target speed. The flow should increase and decrease
-    // since the flow acceleration
+    // since the flow acceleration is set just high enough (10mm^3/s^2) the target.
+    // speed is reached in the middle
     const auto original_gcode_path_data_100mm_s = mock_msg(100); // 100mm/s
     const auto original_gcode_path_data_10mm_s = mock_msg(10); // 10mm/s
     plugin::gradual_flow::GCodePath path_left
@@ -265,8 +266,8 @@ TEST_CASE("flow limit forward backward target speed not reached")
 {
     // relatively long path with a high target speed in the middle with at
     // both ends a lower target speed. The flow should increase and decrease
-    // since the flow acceleration is set just high enough (10mm^3/s^2) the target.
-    // speed is reached in the middle
+    // since the flow acceleration is set relatively low (1mm^3/s^2) the
+    // target flow is not reached
     const auto original_gcode_path_data_100mm_s = mock_msg(100); // 100mm/s
     const auto original_gcode_path_data_10mm_s = mock_msg(10); // 10mm/s
     plugin::gradual_flow::GCodePath path_left
@@ -299,7 +300,8 @@ TEST_CASE("flow limit forward backward target speed not reached")
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
 
-    for (auto& path: limited_flow_acceleration_paths) {
+    for (auto& path: limited_flow_acceleration_paths)
+    {
         REQUIRE(path.flow() < path_middle.flow());
     }
 }

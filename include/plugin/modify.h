@@ -48,6 +48,15 @@ struct Generate
                     const auto& gcode_path_msg = request.gcode_paths().at(i);
 
                     geometry::polyline<> points;
+                    /*
+                     * We need to add the last point of the previous path to the current path
+                     * since the paths in Cura are a connected line string and a new path begins
+                     * where the previous path ends (see figure below).
+                     *    {                Path A             }{          Path B        }{    ....
+                     *    a.1-----------a.2------a.3---------a.4------b.1--------b.2--- c.1---....
+                     * For our purposes it is easier that each path is a separate line string, and
+                     * no knowledge of the previous path is needed.
+                     */
                     if (i >= 1)
                     {
                         const auto& prev_path = &request.gcode_paths().at(i - 1).path().path();

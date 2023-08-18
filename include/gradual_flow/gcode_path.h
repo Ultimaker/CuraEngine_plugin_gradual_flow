@@ -191,9 +191,11 @@ struct GCodePath {
                 const auto partition_y = prev_point.Y + static_cast<long long>(static_cast<double>(next_point.Y - prev_point.Y) * segment_ratio);
                 const auto partition_point = ClipperLib::IntPoint(partition_x, partition_y);
 
+                const auto partition_point_index = partition_index + (direction == utils::Direction::Forward ? 1 : 0);
+
                 // points left of the partition_index
                 geometry::polyline<> left_points;
-                for (unsigned int i = 0; i < partition_index + (direction == utils::Direction::Forward ? 1 : 0); ++i)
+                for (unsigned int i = 0; i < partition_point_index; ++i)
                 {
                     left_points.emplace_back(points[i]);
                 }
@@ -202,7 +204,7 @@ struct GCodePath {
                 // points right of the partition_index
                 geometry::polyline<> right_points;
                 right_points.emplace_back(partition_point);
-                for (unsigned int i = partition_index + (direction == utils::Direction::Forward ? 1 : 0); i < points.size(); ++i)
+                for (unsigned int i = partition_point_index; i < points.size(); ++i)
                 {
                     right_points.emplace_back(points[i]);
                 }
@@ -350,6 +352,8 @@ struct GCodeState
             }
         }
 
+        // while we have not reached the target flow, iteratively discretize the path such that
+        // the new path has a duration of discretized_duration and an increased flow of flow_acceleration
         while (current_flow < target_flow)
         {
             current_flow = std::min(target_flow, current_flow + flow_acceleration * discretized_duration);
