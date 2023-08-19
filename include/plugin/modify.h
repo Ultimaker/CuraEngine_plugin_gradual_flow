@@ -42,6 +42,13 @@ struct Generate
             grpc::Status status = grpc::Status::OK;
             try
             {
+                auto global_settings = settings.get()->at(client_metadata);
+
+                if (!global_settings.gradual_flow_enabled)
+                {
+                    // TODO
+                }
+
                 std::vector<GCodePath> gcode_paths;
                 for (int i = 0; i < request.gcode_paths().size(); ++i)
                 {
@@ -84,8 +91,8 @@ struct Generate
                 GCodeState state
                 {
                     .current_flow = 0., // initial flow is 0
-                    .flow_acceleration = 1000000000., // TODO get slope from settings
-                    .discretized_duration = .1, // TODO get step duration from settings
+                    .flow_acceleration = request.layer_nr() == 0 ? global_settings.layer_0_max_flow_acceleration : global_settings.max_flow_acceleration,
+                    .discretized_duration = global_settings.gradual_flow_discretisation_step_size,
                 };
 
                 const auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);

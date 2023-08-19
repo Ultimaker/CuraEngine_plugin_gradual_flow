@@ -17,8 +17,31 @@ namespace plugin
 
 struct Settings
 {
+    bool gradual_flow_enabled = { false };
+    double max_flow_acceleration = { 0.0 };
+    double layer_0_max_flow_acceleration = { 0.0 };
+    double gradual_flow_discretisation_step_size = { 0.0 };
+
     explicit Settings(const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& msg)
     {
+        const auto global_settings = msg.global_settings().settings();
+
+        gradual_flow_enabled = [global_settings](){
+            const auto gradual_flow_enabled_str = global_settings.at(settingKey("gradual_flow_enabled", "gradualflowplugin", "0.1.0"));
+            if (gradual_flow_enabled_str == "true" || gradual_flow_enabled_str == "True")
+            {
+                return true;
+            }
+            if (gradual_flow_enabled_str == "false" || gradual_flow_enabled_str == "False")
+            {
+                return false;
+            }
+            throw std::runtime_error("gradual_flow_enabled must be either True or False");
+        }();
+
+        max_flow_acceleration = std::atof(global_settings.at(settingKey("max_flow_acceleration", "gradualflowplugin", "0.1.0")).c_str()) * 1e9;
+        layer_0_max_flow_acceleration = std::atof(global_settings.at(settingKey("layer_0_max_flow_acceleration", "gradualflowplugin", "0.1.0")).c_str()) * 1e9;
+        gradual_flow_discretisation_step_size = std::atof(global_settings.at(settingKey("gradual_flow_discretisation_step_size", "gradualflowplugin", "0.1.0")).c_str());
     }
 
     static std::optional<std::string> retrieveSettings(std::string settings_key, const auto& request, const auto& metadata)
