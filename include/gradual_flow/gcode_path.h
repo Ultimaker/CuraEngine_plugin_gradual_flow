@@ -159,8 +159,8 @@ struct GCodePath {
             const GCodePath gcode_path
             {
                 .original_gcode_path_data = original_gcode_path_data,
-                .speed = partition_speed,
                 .points = points,
+                .speed = partition_speed
             };
             return std::make_tuple(gcode_path, std::nullopt, remaining_partition_duration);
         }

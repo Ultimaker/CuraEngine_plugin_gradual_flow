@@ -10,6 +10,7 @@
 #include <boost/asio/awaitable.hpp>
 #include <spdlog/spdlog.h>
 
+#include <coroutine>
 #include <functional>
 #include <memory>
 #include <unordered_map>
@@ -39,6 +40,7 @@ struct Broadcast
                 request,
                 writer,
                 boost::asio::use_awaitable);
+            spdlog::info("Received broadcast settings request");
             const google::protobuf::Empty response{};
             co_await agrpc::finish(writer, response, grpc::Status::OK, boost::asio::use_awaitable);
             settings->insert_or_assign(getUuid(server_context), Settings{ request });
