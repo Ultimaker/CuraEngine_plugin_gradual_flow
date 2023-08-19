@@ -30,7 +30,7 @@ struct GCodePath {
 
     double targetSpeed() const // um/s
     {
-        return original_gcode_path_data->config().speed_derivatives().velocity() * 1000.;
+        return original_gcode_path_data->config().speed_derivatives().velocity() * 1e3;
     }
 
     /*
@@ -88,7 +88,7 @@ struct GCodePath {
         auto is_first_point = true;
         for (auto point: points) {
             const auto identifier = is_first_point ? "M" : "L";
-            path_data += fmt::format("{}{} {} ", identifier, point.X * .001, point.Y * .001);
+            path_data += fmt::format("{}{} {} ", identifier, point.X * 1e-3, point.Y * 1e-3);
             is_first_point = false;
         }
         return path_data;
@@ -191,7 +191,31 @@ struct GCodePath {
                 const auto partition_y = prev_point.Y + static_cast<long long>(static_cast<double>(next_point.Y - prev_point.Y) * segment_ratio);
                 const auto partition_point = ClipperLib::IntPoint(partition_x, partition_y);
 
-                const auto partition_point_index = partition_index + (direction == utils::Direction::Forward ? 1 : 0);
+                /*
+                 *                       partition point
+                 *                            v
+                 *   0---------1---------2----x------3---------4
+                 *                       ^           ^
+                 *    partition index when           partition_index when
+                 *          going forwards           going backwards
+                 *
+                 * When we partition the path in a "left" and "right" path we
+                 * expect we end up with the same path for the same partition
+                 * if we go forwards or backwards. This is why
+                 *         partition_point_index = partition_index + 1
+                 * when going _forwards_, while going _backwards_ it is equal
+                 * to
+                 *           partition_point_index = partition_index
+                 *
+                 * Given this new index every point for which
+                 *                 0 >= i > partition_point_index
+                 * holds belongs to the _left_ path while every point for which
+                 *        partition_point_index >= i > points.size()
+                 * belongs to the right path.
+                 */
+                const auto partition_point_index = direction == utils::Direction::Forward
+                        ? partition_index + 1
+                        : partition_index;
 
                 // points left of the partition_index
                 geometry::polyline<> left_points;
