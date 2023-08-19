@@ -270,7 +270,7 @@ struct GCodePath {
         }
     }
 
-    cura::plugins::v0::GCodePath to_grpc_message() const
+    cura::plugins::v0::GCodePath toGrpcMessage() const
     {
         cura::plugins::v0::GCodePath message;
 
