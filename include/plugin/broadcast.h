@@ -30,6 +30,7 @@ struct Broadcast
     using shared_settings_t = std::shared_ptr<settings_t>;
     service_t broadcast_service{ std::make_shared<cura::plugins::slots::broadcast::v0::BroadcastService::AsyncService>() };
     shared_settings_t settings{ std::make_shared<settings_t>() };
+    std::shared_ptr<Metadata> metadata{ std::make_shared<Metadata>() };
 
     boost::asio::awaitable<void> run()
     {
@@ -46,9 +47,24 @@ struct Broadcast
                 writer,
                 boost::asio::use_awaitable);
             spdlog::info("Received broadcast settings request");
+
+            grpc::Status status = grpc::Status::OK;
+            try
+            {
+                settings->insert_or_assign(getUuid(server_context), Settings{ request, metadata });
+            }
+            catch (const std::exception& e)
+            {
+                status = grpc::Status(grpc::StatusCode::INTERNAL, e.what());
+            }
+            if (! status.ok())
+            {
+                co_await agrpc::finish_with_error(writer, status, boost::asio::use_awaitable);
+                continue;
+            }
+
             const google::protobuf::Empty response{};
             co_await agrpc::finish(writer, response, grpc::Status::OK, boost::asio::use_awaitable);
-            settings->insert_or_assign(getUuid(server_context), Settings{ request });
         }
     }
 };

@@ -24,10 +24,10 @@ int main(int argc, const char** argv)
 
     using generate_t = plugin::gradual_flow::Generate<modify::GCodePathsModifyService::AsyncService, modify::CallResponse, modify::CallRequest>;
     plugin::Plugin<generate_t> plugin{ args.at("--address").asString(), args.at("--port").asString(), grpc::InsecureServerCredentials() };
-    plugin.addHandshakeService(plugin::Handshake{ .metadata = plugin.metadata });
+    plugin.addHandshakeService(plugin::Handshake{ .metadata = plugin.metadata, .broadcast_subscriptions = { cura::plugins::v0::SlotID::SETTINGS_BROADCAST } });
 
     auto broadcast_settings = std::make_shared<plugin::Broadcast::settings_t>();
-    plugin.addBroadcastService(plugin::Broadcast{ .settings = broadcast_settings });
+    plugin.addBroadcastService(plugin::Broadcast{ .settings = broadcast_settings, .metadata = plugin.metadata });
     plugin.addGenerateService(generate_t{ .settings = broadcast_settings, .metadata = plugin.metadata });
     plugin.start();
     plugin.run();

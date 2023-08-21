@@ -19,41 +19,50 @@ namespace plugin
 
 struct Settings
 {
+    std::shared_ptr<Metadata> metadata;
     bool gradual_flow_enabled = { false };
     double max_flow_acceleration = { 0.0 };
     double layer_0_max_flow_acceleration = { 0.0 };
     double gradual_flow_discretisation_step_size = { 0.0 };
 
-    explicit Settings(const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& msg)
+    explicit Settings(const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& request, const std::shared_ptr<Metadata>& metadata)
+        : metadata{ metadata }
     {
-        const auto global_settings = msg.global_settings().settings();
+        const auto gradual_flow_enabled_setting = retrieveSettings("gradual_flow_enabled", request, metadata);
+        const auto max_flow_acceleration_setting = retrieveSettings("max_flow_acceleration", request, metadata);
+        const auto layer_0_max_flow_acceleration_setting = retrieveSettings("layer_0_max_flow_acceleration", request, metadata);
+        const auto gradual_flow_discretisation_step_size_setting = retrieveSettings("gradual_flow_discretisation_step_size", request, metadata);
 
-        gradual_flow_enabled = [global_settings]()
+        if (! gradual_flow_enabled_setting.has_value() || ! max_flow_acceleration_setting.has_value() || ! layer_0_max_flow_acceleration_setting.has_value()
+            || ! gradual_flow_discretisation_step_size_setting.has_value())
         {
-            const auto gradual_flow_enabled_str = global_settings.at(settingKey("gradual_flow_enabled", "gradualflowplugin", "0.1.0"));
-            if (gradual_flow_enabled_str == "true" || gradual_flow_enabled_str == "True")
-            {
-                return true;
-            }
-            if (gradual_flow_enabled_str == "false" || gradual_flow_enabled_str == "False")
-            {
-                return false;
-            }
-            throw std::runtime_error("gradual_flow_enabled must be either True or False");
-        }();
+            spdlog::error(
+                "gradual_flow_enabled: {}, max_flow_acceleration: {}, layer_0_max_flow_acceleration: {}, gradual_flow_discretisation_step_size: {}",
+                gradual_flow_enabled_setting.has_value(),
+                max_flow_acceleration_setting.has_value(),
+                layer_0_max_flow_acceleration_setting.has_value(),
+                gradual_flow_discretisation_step_size_setting.has_value());
+            throw std::runtime_error(fmt::format(
+                "gradual_flow_enabled: {}, max_flow_acceleration: {}, layer_0_max_flow_acceleration: {}, gradual_flow_discretisation_step_size: {}",
+                gradual_flow_enabled_setting.has_value(),
+                max_flow_acceleration_setting.has_value(),
+                layer_0_max_flow_acceleration_setting.has_value(),
+                gradual_flow_discretisation_step_size_setting.has_value()));
+        }
+        gradual_flow_enabled = gradual_flow_enabled_setting.value() == "True" || gradual_flow_enabled_setting.value() == "true";
 
-        // TODO: use retrieveSettings
-        max_flow_acceleration = std::atof(global_settings.at(settingKey("max_flow_acceleration", "gradualflowplugin", "0.1.0")).c_str()) * 1e9;
-        layer_0_max_flow_acceleration = std::atof(global_settings.at(settingKey("layer_0_max_flow_acceleration", "gradualflowplugin", "0.1.0")).c_str()) * 1e9;
-        gradual_flow_discretisation_step_size = std::atof(global_settings.at(settingKey("gradual_flow_discretisation_step_size", "gradualflowplugin", "0.1.0")).c_str());
+        max_flow_acceleration = std::stod(max_flow_acceleration_setting.value()) * 1e9;
+        layer_0_max_flow_acceleration = std::stod(layer_0_max_flow_acceleration_setting.value()) * 1e9;
+        gradual_flow_discretisation_step_size = std::stod(gradual_flow_discretisation_step_size_setting.value());
     }
 
-    static std::optional<std::string> retrieveSettings(std::string settings_key, const auto& request, const auto& metadata)
+    static std::optional<std::string>
+        retrieveSettings(std::string settings_key, const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& request, const auto& metadata)
     {
         auto settings_key_ = settingKey(settings_key, metadata->plugin_name, metadata->plugin_version);
-        if (request.settings().settings().contains(settings_key_))
+        if (request.global_settings().settings().contains(settings_key_))
         {
-            return request.settings().settings().at(settings_key_);
+            return request.global_settings().settings().at(settings_key_);
         }
 
         return std::nullopt;
@@ -61,11 +70,7 @@ struct Settings
 
     static bool validatePlugin(const cura::plugins::slots::handshake::v0::CallRequest& request, const std::shared_ptr<Metadata>& metadata)
     {
-        if (request.plugin_name() == metadata->plugin_name && request.plugin_version() == metadata->plugin_version)
-        {
-            return true;
-        }
-        return false;
+        return request.plugin_name() == metadata->plugin_name && request.plugin_version() == metadata->plugin_version;
     }
     static std::string settingKey(std::string_view short_key, std::string_view name, std::string_view version)
     {
