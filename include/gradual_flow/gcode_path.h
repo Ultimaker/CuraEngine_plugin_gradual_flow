@@ -284,7 +284,7 @@ struct GCodePath {
             point_message->set_y(point.Y);
         }
 
-        message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed);
+        message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed / 1000);
         // TODO what to do with jerk and acceleration?
         message.mutable_config()->mutable_speed_derivatives()->set_acceleration(0);
         message.mutable_config()->mutable_speed_derivatives()->set_jerk(0);
