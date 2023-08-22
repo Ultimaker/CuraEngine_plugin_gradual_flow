@@ -1,5 +1,5 @@
 {
-  "speed": {
+  "material_flow": {
     "children": {
       "gradual_flow_enabled": {
         "label": "Gradual flow enabled",
