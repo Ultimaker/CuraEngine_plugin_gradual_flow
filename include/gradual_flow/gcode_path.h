@@ -13,12 +13,12 @@
 #include "cura/plugins/v0/gcodepath.pb.h"
 
 #include <range/v3/all.hpp>
-#include <range/v3/view/take.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/take.hpp>
 
-#include <vector>
-#include <spdlog/spdlog.h>
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
+#include <vector>
 
 namespace plugin::gradual_flow
 {
@@ -285,9 +285,6 @@ struct GCodePath {
         }
 
         message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed / 1000);
-        // TODO what to do with jerk and acceleration?
-        message.mutable_config()->mutable_speed_derivatives()->set_acceleration(0);
-        message.mutable_config()->mutable_speed_derivatives()->set_jerk(0);
 
         return message;
     }
@@ -295,10 +292,10 @@ struct GCodePath {
 
 struct GCodeState
 {
-    double current_flow; // um^3/s
-    const double flow_acceleration; // um^3/s^2
-    const double discretized_duration; // s
-    double discretized_duration_remaining = 0;
+    double current_flow { 0.0 }; // um^3/s
+    double flow_acceleration {0.0 }; // um^3/s^2
+    double discretized_duration { 0.0 }; // s
+    double discretized_duration_remaining { 0.0 };
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
     {
