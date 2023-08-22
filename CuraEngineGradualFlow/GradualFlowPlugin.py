@@ -8,6 +8,7 @@ from UM.Logger import Logger
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.i18n import i18nCatalog
 from cura.BackendPlugin import BackendPlugin
+from cura.CuraApplication import CuraApplication
 
 
 catalog = i18nCatalog("cura")
@@ -32,6 +33,10 @@ class GradualFlowPlugin(BackendPlugin):
     def _on_container_load_complete(self, container_id) -> None:
         pass
 
+    def gradualFlowEnabled(self):
+        # FIXME: This should only be True when we actually use it for any extruder
+        return CuraApplication.getInstance().getGlobalContainerStack().getProperty(f"_plugin__curaenginegradualflow__0_1_0__gradual_flow_enabled", "value")
+
     def getPort(self):
         return super().getPort() if not self.isDebug() else int(os.environ["CURAENGINE_GCODE_PATHS_MODIFY_PORT"])
 
@@ -39,7 +44,7 @@ class GradualFlowPlugin(BackendPlugin):
         return not hasattr(sys, "frozen") and os.environ.get("CURAENGINE_GCODE_PATHS_MODIFY_PORT", None) is not None
 
     def start(self):
-        if not self.isDebug():
+        if self.gradualFlowEnabled() and not self.isDebug():
             super().start()
 
     def binaryPath(self) -> Path:
