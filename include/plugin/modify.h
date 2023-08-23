@@ -45,13 +45,14 @@ struct Generate
 
             Rsp response;
             auto client_metadata = getUuid(server_context);
+            const auto& extruder_nr = request.extruder_nr();
 
             grpc::Status status = grpc::Status::OK;
             try
             {
-                auto global_settings = settings.get()->at(client_metadata);
+                auto extruder_settings = settings.get()->at(client_metadata);
 
-                if (! global_settings.gradual_flow_enabled)
+                if (! extruder_settings.gradual_flow_enabled[extruder_nr])
                 {
                     // If gradual flow is disabled, just return the original gcode paths
                     response.mutable_gcode_paths()->CopyFrom(request.gcode_paths());
@@ -100,8 +101,8 @@ struct Generate
 
                     GCodeState state{
                         .current_flow = previous_flow.contains(client_metadata) ? previous_flow.at(client_metadata) : 0.0,
-                        .flow_acceleration = request.layer_nr() == 0 ? global_settings.layer_0_max_flow_acceleration : global_settings.max_flow_acceleration,
-                        .discretized_duration = global_settings.gradual_flow_discretisation_step_size,
+                        .flow_acceleration = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr],
+                        .discretized_duration = extruder_settings.gradual_flow_discretisation_step_size[extruder_nr],
                     };
 
                     auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);

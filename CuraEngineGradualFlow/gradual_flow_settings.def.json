@@ -3,11 +3,11 @@
     "children": {
       "gradual_flow_enabled": {
         "label": "Gradual flow enabled",
-        "description": "Enable gradual flow changes. When enabled the flow is gradually increased/decreased to the target flow. This is useful for printers with a bowden tube where the flow is not immediately changed when the extruder motor starts\/stops.",
+        "description": "Enable gradual flow changes. When enabled, the flow is gradually increased/decreased to the target flow. This is useful for printers with a bowden tube where the flow is not immediately changed when the extruder motor starts\/stops.",
         "type": "bool",
         "default_value": true,
         "settable_per_mesh": false,
-        "settable_per_extruder":false
+        "settable_per_extruder": true
       },
       "max_flow_acceleration": {
         "enabled": "gradual_flow_enabled",
@@ -19,7 +19,7 @@
         "minimum_value_warning": 0.1,
         "minimum_value": 0.01,
         "settable_per_mesh": false,
-        "settable_per_extruder": false,
+        "settable_per_extruder": true,
         "comment": "when enabled, each second the flow will at max be increased/decreased by this value"
       },
       "layer_0_max_flow_acceleration": {
@@ -33,7 +33,7 @@
         "minimum_value_warning": 0.1,
         "minimum_value": 0.01,
         "settable_per_mesh": false,
-        "settable_per_extruder": false
+        "settable_per_extruder": true
       },
       "gradual_flow_discretisation_step_size": {
         "enabled": "gradual_flow_enabled",
