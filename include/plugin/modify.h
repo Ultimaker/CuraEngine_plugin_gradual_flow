@@ -2,12 +2,12 @@
 #define PLUGIN_MODIFY_H
 
 #include "gradual_flow/gcode_path.h"
-
 #include "plugin/broadcast.h"
 #include "plugin/metadata.h"
 #include "plugin/settings.h"
 
 #include <boost/asio/awaitable.hpp>
+#include <range/v3/view/drop.hpp>
 #include <spdlog/spdlog.h>
 
 #if __has_include(<coroutine>)
@@ -34,6 +34,7 @@ struct Generate
 
     boost::asio::awaitable<void> run()
     {
+        std::unordered_map<std::string, double> previous_flow;
         while (true)
         {
             grpc::ServerContext server_context;
@@ -46,17 +47,23 @@ struct Generate
             auto client_metadata = getUuid(server_context);
 
             grpc::Status status = grpc::Status::OK;
-            try {
+            try
+            {
                 auto global_settings = settings.get()->at(client_metadata);
 
-                if (!global_settings.gradual_flow_enabled) {
+                if (! global_settings.gradual_flow_enabled)
+                {
                     // If gradual flow is disabled, just return the original gcode paths
                     response.mutable_gcode_paths()->CopyFrom(request.gcode_paths());
-                } else {
+                }
+                else
+                {
                     // Parse the gcode paths from the request
                     std::vector<GCodePath> gcode_paths;
-                    for (int i = 0; i < request.gcode_paths().size(); ++i) {
-                        const auto &gcode_path_msg = request.gcode_paths().at(i);
+
+                    for (int i = 0; i < request.gcode_paths().size(); ++i)
+                    {
+                        const auto& gcode_path_msg = request.gcode_paths().at(i);
 
                         geometry::polyline<> points;
                         /*
@@ -70,20 +77,20 @@ struct Generate
                          */
                         if (i >= 1)
                         {
-                            const auto &prev_path = &request.gcode_paths().at(i - 1).path().path();
-                            if (!prev_path->empty())
+                            const auto& prev_path = &request.gcode_paths().at(i - 1).path().path();
+                            if (! prev_path->empty())
                             {
-                                const auto &point = prev_path->at(prev_path->size() - 1); // prev_path->end();
+                                const auto& point = prev_path->at(prev_path->size() - 1); // prev_path->end();
                                 points.push_back(ClipperLib::IntPoint(point.x(), point.y()));
                             }
                         }
 
-                        for (const auto &point: gcode_path_msg.path().path()) {
+                        for (const auto& point : gcode_path_msg.path().path())
+                        {
                             points.push_back(ClipperLib::IntPoint(point.x(), point.y()));
                         }
 
-                        GCodePath gcode_path
-                        {
+                        GCodePath gcode_path{
                             .original_gcode_path_data = &gcode_path_msg,
                             .points = points,
                         };
@@ -91,19 +98,28 @@ struct Generate
                         gcode_paths.push_back(gcode_path);
                     }
 
-                    GCodeState state
-                    {
-                        .current_flow = 0., // initial flow is 0
-                        .flow_acceleration = request.layer_nr() == 0
-                             ? global_settings.layer_0_max_flow_acceleration
-                             : global_settings.max_flow_acceleration,
+                    GCodeState state{
+                        .current_flow = previous_flow.contains(client_metadata) ? previous_flow.at(client_metadata) : 0.0,
+                        .flow_acceleration = request.layer_nr() == 0 ? global_settings.layer_0_max_flow_acceleration : global_settings.max_flow_acceleration,
                         .discretized_duration = global_settings.gradual_flow_discretisation_step_size,
                     };
 
-                    const auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);
-
+                    auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);
+                    auto last_non_zero_flow = limited_flow_acceleration_paths | ranges::views::reverse
+                                            | ranges::views::filter(
+                                                  [](auto& path)
+                                                  {
+                                                      return path.flow() > 0.0;
+                                                  })
+                                            | ranges::views::transform(
+                                                  [](auto& path)
+                                                  {
+                                                      return path.flow();
+                                                  })
+                                            | ranges::views::take(1);
+                    previous_flow.emplace(client_metadata, ranges::front(last_non_zero_flow));
                     // Copy newly generated paths to response
-                    for (const auto &gcode_path: limited_flow_acceleration_paths)
+                    for (const auto& gcode_path : limited_flow_acceleration_paths)
                     {
                         // TODO: since the first point is added from the previous path in the request-parsing,
                         //  we should remove it here again. Note that the first point is added for every path
@@ -129,6 +145,6 @@ struct Generate
     }
 };
 
-} // namespace plugin
+} // namespace plugin::gradual_flow
 
 #endif // PLUGIN_MODIFY_H

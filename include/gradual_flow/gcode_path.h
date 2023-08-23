@@ -4,29 +4,31 @@
 #ifndef CURAENGINE_PLUGIN_GRADUAL_FLOW_GCODE_PATH_H
 #define CURAENGINE_PLUGIN_GRADUAL_FLOW_GCODE_PATH_H
 
-#include "gradual_flow/point_container.h"
-#include "gradual_flow/utils.h"
-
 #include "cura/plugins/slots/gcode_paths/v0/modify.grpc.pb.h"
 #include "cura/plugins/slots/gcode_paths/v0/modify.pb.h"
 #include "cura/plugins/v0/gcodepath.grpc.pb.h"
 #include "cura/plugins/v0/gcodepath.pb.h"
+#include "gradual_flow/point_container.h"
+#include "gradual_flow/utils.h"
 
+#include <fmt/format.h>
 #include <range/v3/all.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/take.hpp>
-
-#include <fmt/format.h>
 #include <spdlog/spdlog.h>
+
+#include <optional>
 #include <vector>
 
 namespace plugin::gradual_flow
 {
 
-struct GCodePath {
-    const cura::plugins::v0::GCodePath *original_gcode_path_data;
+struct GCodePath
+{
+    const cura::plugins::v0::GCodePath* original_gcode_path_data;
     geometry::polyline<> points;
     double speed = targetSpeed(); // um/s
+    std::optional<double> flow_ = std::nullopt; // um/s
 
     double targetSpeed() const // um/s
     {
@@ -50,11 +52,8 @@ struct GCodePath {
      */
     double extrusionVolumePerMm() const // um^3/um
     {
-        return original_gcode_path_data->flow()
-               * original_gcode_path_data->width_factor()
-               * original_gcode_path_data->config().line_width()
-               * original_gcode_path_data->config().layer_thickness()
-               * original_gcode_path_data->config().flow_ratio();
+        return original_gcode_path_data->flow() * original_gcode_path_data->width_factor() * original_gcode_path_data->config().line_width()
+             * original_gcode_path_data->config().layer_thickness() * original_gcode_path_data->config().flow_ratio();
     }
 
     /*
@@ -62,9 +61,14 @@ struct GCodePath {
      *
      * @return The extrusion volume of the path in um^3/s
      */
-    double flow() const // um^3/s
+    double flow() // um^3/s
     {
-        return extrusionVolumePerMm() * speed;
+        if (! flow_.has_value())
+        {
+            flow_ = extrusionVolumePerMm() * speed;
+        }
+
+        return flow_.value();
     }
 
     /*
@@ -86,7 +90,8 @@ struct GCodePath {
     {
         std::string path_data;
         auto is_first_point = true;
-        for (auto point: points) {
+        for (auto point : points)
+        {
             const auto identifier = is_first_point ? "M" : "L";
             path_data += fmt::format("{}{} {} ", identifier, point.X * 1e-3, point.Y * 1e-3);
             is_first_point = false;
@@ -99,7 +104,7 @@ struct GCodePath {
      *
      * @return the SVG path
      */
-    std::string toSvgPath() const
+    std::string toSvgPath()
     {
         const auto path_data = toSvgPathData();
 
@@ -122,7 +127,8 @@ struct GCodePath {
     {
         double path_length = 0;
         auto last_point = points.front();
-        for (const auto& point: points | ranges::views::drop(1)) {
+        for (const auto& point : points | ranges::views::drop(1))
+        {
             path_length += std::hypot(point.X - last_point.X, point.Y - last_point.Y);
             last_point = point;
         }
@@ -156,12 +162,7 @@ struct GCodePath {
         if (partition_duration >= total_path_duration)
         {
             const auto remaining_partition_duration = partition_duration - total_path_duration;
-            const GCodePath gcode_path
-            {
-                .original_gcode_path_data = original_gcode_path_data,
-                .points = points,
-                .speed = partition_speed
-            };
+            const GCodePath gcode_path{ .original_gcode_path_data = original_gcode_path_data, .points = points, .speed = partition_speed };
             return std::make_tuple(gcode_path, std::nullopt, remaining_partition_duration);
         }
 
@@ -213,9 +214,7 @@ struct GCodePath {
                  *        partition_point_index >= i > points.size()
                  * belongs to the right path.
                  */
-                const auto partition_point_index = direction == utils::Direction::Forward
-                        ? partition_index + 1
-                        : partition_index;
+                const auto partition_point_index = direction == utils::Direction::Forward ? partition_index + 1 : partition_index;
 
                 // points left of the partition_index
                 geometry::polyline<> left_points;
@@ -235,36 +234,34 @@ struct GCodePath {
 
                 switch (direction)
                 {
-                    case utils::Direction::Forward: {
-                        const GCodePath partition_gcode_path
-                        {
-                            .original_gcode_path_data = original_gcode_path_data,
-                            .points = left_points,
-                            .speed = partition_speed,
-                        };
-                        const GCodePath remaining_gcode_path
-                        {
-                            .original_gcode_path_data = original_gcode_path_data,
-                            .points = right_points,
-                            .speed = speed,
-                        };
-                        return std::make_tuple(partition_gcode_path, remaining_gcode_path, .0);
+                case utils::Direction::Forward:
+                {
+                    const GCodePath partition_gcode_path{
+                        .original_gcode_path_data = original_gcode_path_data,
+                        .points = left_points,
+                        .speed = partition_speed,
                     };
-                    case utils::Direction::Backward: {
-                        const GCodePath partition_gcode_path
-                        {
-                            .original_gcode_path_data = original_gcode_path_data,
-                            .points = right_points,
-                            .speed = partition_speed,
-                        };
-                        const GCodePath remaining_gcode_path
-                        {
-                            .original_gcode_path_data = original_gcode_path_data,
-                            .points = left_points,
-                            .speed = speed,
-                        };
-                        return std::make_tuple(partition_gcode_path, remaining_gcode_path, .0);
-                    }
+                    const GCodePath remaining_gcode_path{
+                        .original_gcode_path_data = original_gcode_path_data,
+                        .points = right_points,
+                        .speed = speed,
+                    };
+                    return std::make_tuple(partition_gcode_path, remaining_gcode_path, .0);
+                };
+                case utils::Direction::Backward:
+                {
+                    const GCodePath partition_gcode_path{
+                        .original_gcode_path_data = original_gcode_path_data,
+                        .points = right_points,
+                        .speed = partition_speed,
+                    };
+                    const GCodePath remaining_gcode_path{
+                        .original_gcode_path_data = original_gcode_path_data,
+                        .points = left_points,
+                        .speed = speed,
+                    };
+                    return std::make_tuple(partition_gcode_path, remaining_gcode_path, .0);
+                }
                 }
             }
         }
@@ -292,12 +289,12 @@ struct GCodePath {
 
 struct GCodeState
 {
-    double current_flow { 0.0 }; // um^3/s
-    double flow_acceleration {0.0 }; // um^3/s^2
-    double discretized_duration { 0.0 }; // s
-    double discretized_duration_remaining { 0.0 };
+    double current_flow{ 0.0 }; // um^3/s
+    double flow_acceleration{ 0.0 }; // um^3/s^2
+    double discretized_duration{ 0.0 }; // s
+    double discretized_duration_remaining{ 0.0 };
 
-    std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
+    std::vector<GCodePath> processGcodePaths(std::vector<GCodePath>& gcode_paths)
     {
         // reset the discretized_duration_remaining
         discretized_duration_remaining = 0;
@@ -316,7 +313,7 @@ struct GCodeState
         discretized_duration_remaining = 0;
 
         std::list<gradual_flow::GCodePath> backward_pass_gcode_paths;
-        for(auto& gcode_path : forward_pass_gcode_paths | ranges::views::reverse)
+        for (auto& gcode_path : forward_pass_gcode_paths | ranges::views::reverse)
         {
             auto discretized_paths = processGcodePath(gcode_path, gradual_flow::utils::Direction::Backward);
             for (auto& path : discretized_paths)
@@ -335,14 +332,14 @@ struct GCodeState
      *
      * @return a vector of discretized paths with a gradual increase in flow
      */
-    std::vector<GCodePath> processGcodePath(const GCodePath& path, const utils::Direction direction)
+    std::vector<GCodePath> processGcodePath(GCodePath& path, const utils::Direction direction)
     {
         if (path.isTravel())
         {
             return { path };
         }
 
-        const auto target_flow = path.flow();
+        auto target_flow = path.flow();
 
         if (target_flow <= current_flow)
         {
@@ -360,7 +357,8 @@ struct GCodeState
         if (discretized_duration_remaining > 0.)
         {
             const auto discretized_segment_speed = current_flow / extrusion_volume_per_mm; // um^3/s / um^3/um = um/s
-            const auto [partitioned_gcode_path, new_remaining_path, remaining_partition_duration] = path.partition(discretized_duration_remaining, discretized_segment_speed, direction);
+            const auto [partitioned_gcode_path, new_remaining_path, remaining_partition_duration]
+                = path.partition(discretized_duration_remaining, discretized_segment_speed, direction);
             discretized_duration_remaining = std::max(.0, discretized_duration_remaining - remaining_partition_duration);
             if (new_remaining_path.has_value())
             {
@@ -393,7 +391,7 @@ struct GCodeState
 
             // when we have remaining paths, we should have no remaining duration as the
             // remaining duration should then be consumed by the remaining paths
-            assert(!new_remaining_path.has_value() || remaining_partition_duration == 0);
+            assert(! new_remaining_path.has_value() || remaining_partition_duration == 0);
             // having no remaining paths implies that there is a duration remaining that should be consumed
             // by the next path
             assert(new_remaining_path.has_value() || remaining_partition_duration > 0);
@@ -415,6 +413,6 @@ struct GCodeState
     }
 };
 
-} // namespace gradual_flow
+} // namespace plugin::gradual_flow
 
-#endif //CURAENGINE_PLUGIN_GRADUAL_FLOW_GCODE_PATH_H
+#endif // CURAENGINE_PLUGIN_GRADUAL_FLOW_GCODE_PATH_H
