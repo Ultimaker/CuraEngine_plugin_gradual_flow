@@ -34,7 +34,10 @@ struct Generate
 
     boost::asio::awaitable<void> run()
     {
-        std::unordered_map<std::string, double> previous_flow;
+        // previous_flow stores the previous flow value, the flow can differ per extruder
+        // so each extruder is stored separately. The key in the map is the client-uuid
+        // and the extruder_nr pair.
+        std::unordered_map<std::string, std::unordered_map<int, double>> previous_flow;
         while (true)
         {
             grpc::ServerContext server_context;
@@ -59,6 +62,11 @@ struct Generate
                 }
                 else
                 {
+                    if (! previous_flow.contains(client_metadata))
+                    {
+                        previous_flow.emplace(client_metadata, std::unordered_map<int, double>());
+                    }
+
                     // Parse the gcode paths from the request
                     std::vector<GCodePath> gcode_paths;
 
@@ -100,7 +108,7 @@ struct Generate
                     }
 
                     GCodeState state{
-                        .current_flow = previous_flow.contains(client_metadata) ? previous_flow.at(client_metadata) : 0.0,
+                        .current_flow =  previous_flow.at(client_metadata).contains(extruder_nr) ? previous_flow.at(client_metadata).at(extruder_nr) : 0.0,
                         .flow_acceleration = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr],
                         .discretized_duration = extruder_settings.gradual_flow_discretisation_step_size[extruder_nr],
                     };
@@ -118,7 +126,7 @@ struct Generate
                                                       return path.flow();
                                                   })
                                             | ranges::views::take(1);
-                    previous_flow.emplace(client_metadata, ranges::front(last_non_zero_flow));
+                    previous_flow.at(client_metadata).emplace(extruder_nr, ranges::front(last_non_zero_flow));
                     // Copy newly generated paths to response
 
                     for (const auto& [index, gcode_path] : limited_flow_acceleration_paths | ranges::views::enumerate)
