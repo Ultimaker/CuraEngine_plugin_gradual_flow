@@ -267,21 +267,21 @@ struct GCodePath
         }
     }
 
-    cura::plugins::v0::GCodePath toGrpcMessage() const
+    cura::plugins::v0::GCodePath toGrpcMessage(const bool include_first_point) const
     {
         cura::plugins::v0::GCodePath message;
 
         message.CopyFrom(*original_gcode_path_data);
 
         message.mutable_path()->clear_path();
-        for (auto& point : points)
+        for (auto& point : points | ranges::views::drop(include_first_point ? 0 : 1))
         {
             const auto& point_message = message.mutable_path()->add_path();
             point_message->set_x(point.X);
             point_message->set_y(point.Y);
         }
 
-        message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed / 1000);
+        message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed * 1e-3);
 
         return message;
     }

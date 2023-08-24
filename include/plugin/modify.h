@@ -120,14 +120,17 @@ struct Generate
                                             | ranges::views::take(1);
                     previous_flow.emplace(client_metadata, ranges::front(last_non_zero_flow));
                     // Copy newly generated paths to response
-                    for (const auto& gcode_path : limited_flow_acceleration_paths)
+
+                    for (const auto& [index, gcode_path] : limited_flow_acceleration_paths | ranges::views::enumerate)
                     {
-                        // TODO: since the first point is added from the previous path in the request-parsing,
-                        //  we should remove it here again. Note that the first point is added for every path
-                        //  except the first one, so we should only remove it if it is not the first path.
-                        auto gcode_path_message = gcode_path.toGrpcMessage();
+                        // since the first point is added from the previous path in the request-parsing,
+                        // we should remove it here again. Note that the first point is added for every path
+                        // except the first one, so we should only remove it if it is not the first path
+                        const auto include_first_point = index == 0;
+                        auto gcode_path_message = gcode_path.toGrpcMessage(include_first_point);
                         response.add_gcode_paths()->CopyFrom(gcode_path_message);
                     }
+
                 }
             }
             catch (const std::exception& e)
