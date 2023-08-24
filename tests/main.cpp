@@ -244,7 +244,7 @@ TEST_CASE("flow limit forward backward target speed reached")
         .points = { { 190000, 10000 }, { 200000, 20000 } },
     };
 
-    std::vector<plugin::gradual_flow::GCodePath> paths { path_left, path_middle, path_right };
+    const std::vector<plugin::gradual_flow::GCodePath> paths { path_left, path_middle, path_right };
 
     const auto discretized_duration = 0.01;
     const auto flow_acceleration = 10000000000.;

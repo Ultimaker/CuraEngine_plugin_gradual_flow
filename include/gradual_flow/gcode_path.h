@@ -28,7 +28,7 @@ struct GCodePath
     const cura::plugins::v0::GCodePath* original_gcode_path_data;
     geometry::polyline<> points;
     double speed = targetSpeed(); // um/s
-    std::optional<double> flow_ = std::nullopt; // um/s
+    double flow_ = extrusionVolumePerMm() * speed; // um/s
 
     double targetSpeed() const // um/s
     {
@@ -61,14 +61,9 @@ struct GCodePath
      *
      * @return The extrusion volume of the path in um^3/s
      */
-    double flow() // um^3/s
+    double flow() const // um^3/s
     {
-        if (! flow_.has_value())
-        {
-            flow_ = extrusionVolumePerMm() * speed;
-        }
-
-        return flow_.value();
+        return flow_;
     }
 
     /*
@@ -294,7 +289,7 @@ struct GCodeState
     double discretized_duration{ 0.0 }; // s
     double discretized_duration_remaining{ 0.0 };
 
-    std::vector<GCodePath> processGcodePaths(std::vector<GCodePath>& gcode_paths)
+    std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
     {
         // reset the discretized_duration_remaining
         discretized_duration_remaining = 0;
@@ -332,7 +327,7 @@ struct GCodeState
      *
      * @return a vector of discretized paths with a gradual increase in flow
      */
-    std::vector<GCodePath> processGcodePath(GCodePath& path, const utils::Direction direction)
+    std::vector<GCodePath> processGcodePath(const GCodePath& path, const utils::Direction direction)
     {
         if (path.isTravel())
         {
