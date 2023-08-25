@@ -287,7 +287,8 @@ struct GCodeState
     double current_flow{ 0.0 }; // um^3/s
     double flow_acceleration{ 0.0 }; // um^3/s^2
     double discretized_duration{ 0.0 }; // s
-    double discretized_duration_remaining{ 0.0 };
+    double discretized_duration_remaining{ 0.0 }; // s
+    double target_end_flow{ 0.0 }; // um^3/s
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
     {
@@ -306,6 +307,12 @@ struct GCodeState
 
         // reset the discretized_duration_remaining
         discretized_duration_remaining = 0;
+
+        // set the current flow to the target end flow. When executing the backward pass we want to
+        // we start with this flow and gradually increase it to the target flow. However, if the
+        // highest flow we can achieve is lower than this target flow we want to use that flow
+        // instead.
+        current_flow = std::min(current_flow, target_end_flow);
 
         std::list<gradual_flow::GCodePath> backward_pass_gcode_paths;
         for (auto& gcode_path : forward_pass_gcode_paths | ranges::views::reverse)
@@ -366,8 +373,9 @@ struct GCodeState
             }
         }
 
-        // while we have not reached the target flow, iteratively discretize the path such that
-        // the new path has a duration of discretized_duration and an increased flow of flow_acceleration
+        // while we have not reached the target flow, iteratively discretize the path
+        // such that the new path has a duration of discretized_duration and with each
+        // iteration an increased flow of flow_acceleration
         while (current_flow < target_flow)
         {
             current_flow = std::min(target_flow, current_flow + flow_acceleration * discretized_duration);
