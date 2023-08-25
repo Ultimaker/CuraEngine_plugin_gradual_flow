@@ -42,7 +42,7 @@ struct GCodePath
      */
     bool isTravel() const
     {
-        return original_gcode_path_data->config().line_width() == 0;
+        return targetFlow() == 0;
     }
 
     /*
