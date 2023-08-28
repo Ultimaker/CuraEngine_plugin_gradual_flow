@@ -92,7 +92,16 @@ struct Settings
 
     static bool validatePlugin(const cura::plugins::slots::handshake::v0::CallRequest& request, const std::shared_ptr<Metadata>& metadata)
     {
-        return request.plugin_name() == metadata->plugin_name && request.plugin_version() == metadata->plugin_version;
+        auto plugin_name = request.plugin_name();
+        std::transform(
+                plugin_name.begin(),
+                plugin_name.end(),
+                plugin_name.begin(),
+                [](const auto& c)
+                {
+                    return std::tolower(c);
+                });
+        return plugin_name == metadata->plugin_name && request.plugin_version() == metadata->plugin_version;
     }
 
     static std::string settingKey(std::string_view short_key, std::string_view name, std::string_view version)
