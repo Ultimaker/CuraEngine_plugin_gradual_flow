@@ -92,10 +92,11 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         with open(os.path.join(self.source_folder, "templates", "cura_plugin", "plugin.json.jinja"), "r") as f:
             template = Template(f.read())
 
+        version = Version(self.version)
         with open(os.path.join(self.source_folder, self._cura_plugin_name, "plugin.json"), "w") as f:
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     author=self.author,
-                                    version=self.version,
+                                    version=f"{version.major}.{version.minor}.{version.patch}",
                                     description=self.description,
                                     api_version=self._api_version,
                                     sdk_versions=self._sdk_versions))
@@ -104,6 +105,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         with open(os.path.join(self.source_folder, "templates", "cura_plugin", "package.json.jinja"), "r") as f:
             template = Template(f.read())
 
+        version = Version(self.version)
         with open(os.path.join(self.source_folder, self._cura_plugin_name, "package.json"), "w") as f:
             f.write(template.render(author_id=self.author.lower(),
                                     author=self.author,
@@ -111,7 +113,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     description=self.description,
                                     display_name=self._cura_plugin_name,
                                     package_id=self._cura_plugin_name.lower(),
-                                    version=self.version,
+                                    version=f"{version.major}.{version.minor}.{version.patch}",
                                     website=self.url
                                     ))
 
