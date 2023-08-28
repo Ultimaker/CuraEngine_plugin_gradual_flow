@@ -84,13 +84,13 @@ jobs:
             -   name: Download mac x64 binary artifacts
                 uses: actions/download-artifact@v2
                 with:
-                    name: Macos-X64
+                    name: macOS-X64
                     path: cura-plugin/CuraEngineGradualFlow/x86_64/Darwin
 
             -   name: Download mac arm binaries artifacts
                 uses: actions/download-artifact@v2
                 with:
-                    name: Macos-ARM64
+                    name: macOS-ARM64
                     path: cura-plugin/CuraEngineGradualFlow/arm64/Darwin
 
             -   name: Download win X64 binaries artifacts

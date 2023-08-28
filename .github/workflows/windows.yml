@@ -93,7 +93,7 @@ jobs:
                 run: conan config set storage.download_cache="C:\Users\runneradmin\.conan\conan_download_cache"
 
             -   name: Create the Packages (Powershell)
-                run: conan install $Env:PLUGIN_CONAN_VERSION ${{ inputs.conan_args }} --build=missing --update -if conan_inst
+                run: conan install $Env:PLUGIN_CONAN_VERSION ${{ inputs.conan_args }} --build=missing --update -if plugin_inst
 
             -   name: Upload the binary
                 uses: actions/upload-artifact@v3
