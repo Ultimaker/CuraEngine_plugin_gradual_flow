@@ -116,7 +116,7 @@ jobs:
                 run: |
                     import os
                     with open("run_info.sh", "w") as f:
-                        f.writelines(f'echo "PLUGIN_VERSION_FULL={os.environ["PLUGIN_VERSION_FULL"]}" >> $GITHUB_ENV\n')
+                        f.writelines(f'echo "PLUGIN_CONAN_VERSION={os.environ["PLUGIN_CONAN_VERSION"]}" >> $GITHUB_ENV\n')
 
             -   name: Upload the run info
                 uses: actions/upload-artifact@v3
