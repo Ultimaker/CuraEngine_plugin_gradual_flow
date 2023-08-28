@@ -43,16 +43,6 @@ on:
                 default: ''
                 required: false
                 type: string
-            enterprise:
-                description: 'Build Cura as an Enterprise edition'
-                default: false
-                required: true
-                type: boolean
-            staging:
-                description: 'Use staging API'
-                default: false
-                required: true
-                type: boolean
             architecture:
                 description: 'Architecture'
                 required: true
