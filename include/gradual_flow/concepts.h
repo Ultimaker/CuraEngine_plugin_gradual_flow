@@ -6,7 +6,13 @@
 
 #include <range/v3/range/concepts.hpp>
 
+#if __has_include(<concepts>)
 #include <concepts>
+#elif __has_include(<experimental/concepts>)
+#include <experimental/concepts>
+#define USE_EXPERIMENTAL_CONCEPTS
+#endif
+
 #include <string>
 #include <type_traits>
 
