@@ -195,4 +195,8 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     def package(self):
         copy(self, pattern="LICENSE", dst=os.path.join(self.package_folder, "licenses"), src=self.source_folder)
         ext = ".exe" if self.settings.os == "Windows" else ""
-        copy(self, pattern=f"curaengine_plugin_gradual_flow{ext}", dst="bin", src=os.path.join(self.build_folder))
+        copy(self, pattern=f"curaengine_plugin_gradual_flow{ext}", dst=os.path.join(self.package_folder, "bin"), src=os.path.join(self.build_folder))
+
+    def deploy(self):
+        ext = ".exe" if self.settings.os == "Windows" else ""
+        copy(self, pattern=f"curaengine_plugin_gradual_flow{ext}", dst=self.install_folder, src=os.path.join(self.package_folder, "bin"))
