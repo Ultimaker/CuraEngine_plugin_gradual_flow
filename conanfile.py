@@ -17,11 +17,11 @@ required_conan_version = ">=1.53.0"
 
 class CuraEngineGradualFlowPluginConan(ConanFile):
     name = "curaengine_plugin_gradual_flow"
-    description = "CuraEngine plugin for testing the gcode tool paths modify slot"
+    description = "CuraEngine plugin for gradually smoothing the flow to limit high-flow jumps"
     author = "UltiMaker"
     license = "agpl-3.0"
-    url = "https://github.com/conan-io/conan-center-index"
-    homepage = "https://github.com/Ultimaker/CuraEngine_plugin_gradual_flow"
+    url = "https://github.com/Ultimaker/CuraEngine_plugin_gradual_flow"
+    homepage = "https://ultimaker.com"
     topics = ("protobuf", "asio", "plugin", "curaengine", "gcode-generation", "3D-printing")
     package_type = "library"
     settings = "os", "arch", "compiler", "build_type"
@@ -95,6 +95,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     author=self.author,
                                     version=self.version,
+                                    description=self.description,
                                     api_version=self._api_version,
                                     sdk_versions=self._sdk_versions))
 
@@ -152,6 +153,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     def generate(self):
         self._generate_cmdline()
         self._generate_cura_plugin_constants()
+        self._generate_plugin_metadata()
 
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
