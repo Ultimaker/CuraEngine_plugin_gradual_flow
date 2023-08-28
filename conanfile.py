@@ -112,7 +112,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     website_author=self.homepage,
                                     description=self.description,
                                     display_name=self._cura_plugin_name,
-                                    package_id=self._cura_plugin_name.lower(),
+                                    package_id=self._cura_plugin_name,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
                                     website=self.url
                                     ))
