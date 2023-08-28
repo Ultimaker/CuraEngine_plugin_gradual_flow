@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.23)
 project(curaengine_plugin_gradual_flow)
 
 find_package(Protobuf REQUIRED)
