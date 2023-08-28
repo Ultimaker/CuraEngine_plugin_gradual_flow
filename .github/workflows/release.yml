@@ -73,7 +73,7 @@ jobs:
             -   name: Download the Cura plugin
                 uses: actions/download-artifact@v2
                 with:
-                    name: linux-cura-plugin
+                    name: macos-cura-plugin
                     path: cura-plugin
 
 #            -   name: Download linux modern binary artifacts
