@@ -18,6 +18,7 @@ required_conan_version = ">=1.53.0"
 class CuraEngineGradualFlowPluginConan(ConanFile):
     name = "curaengine_plugin_gradual_flow"
     description = "CuraEngine plugin for testing the gcode tool paths modify slot"
+    author = "UltiMaker"
     license = "agpl-3.0"
     url = "https://github.com/conan-io/conan-center-index"
     homepage = "https://github.com/Ultimaker/CuraEngine_plugin_gradual_flow"
@@ -57,6 +58,14 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     def _cura_plugin_name(self):
         return "CuraEngineGradualFlow"
 
+    @property
+    def _api_version(self):
+        return "8"
+
+    @property
+    def _sdk_versions(self):
+        return ["8.3.0"]
+
     def _generate_cmdline(self):
         with open(os.path.join(self.recipe_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
             template = Template(f.read())
@@ -78,6 +87,16 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     curaengine_plugin_name=self.name,
                                     settings_prefix=f"_plugin__{self._cura_plugin_name.lower()}__{version.major}_{version.minor}_{version.patch}_"))
 
+    def _generate_plugin_metadata(self):
+        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "plugin.json.jinja"), "r") as f:
+            template = Template(f.read())
+
+        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "plugin.json"), "w") as f:
+            f.write(template.render(cura_plugin_name=self._cura_plugin_name,
+                                    author=self.author,
+                                    version=self.version,
+                                    api_version=self._api_version,
+                                    sdk_versions=self._sdk_versions))
 
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
