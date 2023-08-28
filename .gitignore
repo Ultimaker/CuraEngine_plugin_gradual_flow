@@ -131,3 +131,6 @@ conaninfo.txt
 graph_info.json
 build/
 CMakeUserPresets.json
+
+# Generated files
+include/plugin/cmdline.h
