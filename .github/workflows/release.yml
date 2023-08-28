@@ -113,9 +113,10 @@ jobs:
                     source_folder: "cura-plugin/CuraEngineGradualFlow"
                     package_info_path: "cura-plugin/CuraEngineGradualFlow/package.json"
 
-            -   uses: "marvinpinto/action-automatic-releases@latest"
+            -   name: Upload the Cura package
+                uses: actions/upload-artifact@v3
                 with:
-                    repo_token: "${{ secrets.GITHUB_TOKEN }}"
-                    prerelease: true
-                    files: |
+                    name: cura-plugin
+                    path: |
                         *.curapackage
+                    retention-days: 5
