@@ -10,6 +10,8 @@ from conan.tools.files import copy
 from conan.tools.microsoft import check_min_vs, is_msvc_static_runtime, is_msvc
 from conan.tools.scm import Version
 
+from jinja2 import Template
+
 required_conan_version = ">=1.53.0"
 
 
@@ -33,6 +35,10 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         "enable_testing": False,
     }
 
+    def set_version(self):
+        if not self.version:
+            self.version = "0.1.0-alpha"
+
     @property
     def _min_cppstd(self):
         return 20
@@ -47,8 +53,20 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
             "visual_studio": "17",
         }
 
+    def _generate_cmdline(self):
+        with open(os.path.join(self.recipe_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
+            template = Template(f.read())
+
+        version = Version(self.version)
+        with open(os.path.join(self.recipe_folder, "include", "plugin", "cmdline.h"), "w") as f:
+            f.write(template.render(cura_plugin_name="CuraEngineGradualFlow",  # TODO: get this from the conf
+                                    version=f"{version.major}.{version.minor}.{version.patch}",
+                                    curaengine_plugin_name=self.name))
+
+
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
+        copy(self, "*.jinja", os.path.join(self.recipe_folder, "templates"), os.path.join(self.export_sources_folder, "templates"))
         copy(self, "*", os.path.join(self.recipe_folder, "src"), os.path.join(self.export_sources_folder, "src"))
         copy(self, "*", os.path.join(self.recipe_folder, "include"), os.path.join(self.export_sources_folder, "include"))
         copy(self, "*", os.path.join(self.recipe_folder, "tests"), os.path.join(self.export_sources_folder, "tests"))
@@ -98,6 +116,8 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
             raise ConanInvalidConfiguration(f"{self.ref} can not be built as shared on Visual Studio and msvc.")
 
     def generate(self):
+        self._generate_cmdline()
+
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
         tc.variables["ENABLE_TESTS"] = self.options.enable_testing

@@ -3,22 +3,21 @@
 
 #include <fmt/compile.h>
 
-#include <string>
 #include <string_view>
 
 namespace plugin::cmdline
 {
 
-constexpr std::string_view NAME = "CuraEngineGradualFlow";
-constexpr std::string_view VERSION = "0.1.0";
+constexpr std::string_view NAME = "{{ cura_plugin_name }}";
+constexpr std::string_view VERSION = "{{ version }}";
 static const auto VERSION_ID = fmt::format(FMT_COMPILE("{} {}"), NAME, VERSION);
 
 constexpr std::string_view USAGE = R"({0}.
 
 Usage:
-  curaengine_plugin_gradual_flow [--address <address>] [--port <port>]
-  curaengine_plugin_gradual_flow (-h | --help)
-  curaengine_plugin_gradual_flow --version
+  {{ curaengine_plugin_name }} [--address <address>] [--port <port>]
+  {{ curaengine_plugin_name }} (-h | --help)
+  {{ curaengine_plugin_name }} --version
 
 Options:
   -h --help                      Show this screen.
