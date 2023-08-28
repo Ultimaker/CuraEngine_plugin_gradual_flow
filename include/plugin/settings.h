@@ -101,7 +101,16 @@ struct Settings
                 {
                     return std::tolower(c);
                 });
-        return plugin_name == metadata->plugin_name && request.plugin_version() == metadata->plugin_version;
+        auto plugin_name_expect = metadata->plugin_name;
+        std::transform(
+            plugin_name_expect.begin(),
+            plugin_name_expect.end(),
+            plugin_name_expect.begin(),
+            [](const auto& c)
+            {
+                return std::tolower(c);
+            });
+        return plugin_name == plugin_name_expect && request.plugin_version() == metadata->plugin_version;
     }
 
     static std::string settingKey(std::string_view short_key, std::string_view name, std::string_view version)
