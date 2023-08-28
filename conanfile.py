@@ -67,31 +67,31 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         return ["8.3.0"]
 
     def _generate_cmdline(self):
-        with open(os.path.join(self.recipe_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
+        with open(os.path.join(self.source_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
             template = Template(f.read())
 
         version = Version(self.version)
-        with open(os.path.join(self.recipe_folder, "include", "plugin", "cmdline.h"), "w") as f:
+        with open(os.path.join(self.source_folder, "include", "plugin", "cmdline.h"), "w") as f:
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
                                     curaengine_plugin_name=self.name))
 
     def _generate_cura_plugin_constants(self):
-        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "constants.py.jinja"), "r") as f:
+        with open(os.path.join(self.source_folder, "templates", "cura_plugin", "constants.py.jinja"), "r") as f:
             template = Template(f.read())
 
         version = Version(self.version)
-        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "constants.py"), "w") as f:
+        with open(os.path.join(self.source_folder, self._cura_plugin_name, "constants.py"), "w") as f:
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
                                     curaengine_plugin_name=self.name,
                                     settings_prefix=f"_plugin__{self._cura_plugin_name.lower()}__{version.major}_{version.minor}_{version.patch}_"))
 
     def _generate_plugin_metadata(self):
-        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "plugin.json.jinja"), "r") as f:
+        with open(os.path.join(self.source_folder, "templates", "cura_plugin", "plugin.json.jinja"), "r") as f:
             template = Template(f.read())
 
-        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "plugin.json"), "w") as f:
+        with open(os.path.join(self.source_folder, self._cura_plugin_name, "plugin.json"), "w") as f:
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     author=self.author,
                                     version=self.version,
@@ -100,10 +100,10 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     sdk_versions=self._sdk_versions))
 
     def _generate_package_metadata(self):
-        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "package.json.jinja"), "r") as f:
+        with open(os.path.join(self.source_folder, "templates", "cura_plugin", "package.json.jinja"), "r") as f:
             template = Template(f.read())
 
-        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "package.json"), "w") as f:
+        with open(os.path.join(self.source_folder, self._cura_plugin_name, "package.json"), "w") as f:
             f.write(template.render(author_id=self.author.lower(),
                                     author=self.author,
                                     website_author=self.homepage,
