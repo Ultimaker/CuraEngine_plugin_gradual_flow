@@ -137,7 +137,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     def layout(self):
         cmake_layout(self)
-        self.cpp.package.resdirs = [self._cura_plugin_name]
+        self.cpp.package.resdirs = [os.path.join("res", self._cura_plugin_name)]
 
     def requirements(self):
         self.requires("protobuf/3.21.9")
