@@ -120,6 +120,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         copy(self, "*", os.path.join(self.recipe_folder, "src"), os.path.join(self.export_sources_folder, "src"))
         copy(self, "*", os.path.join(self.recipe_folder, "include"), os.path.join(self.export_sources_folder, "include"))
         copy(self, "*", os.path.join(self.recipe_folder, "tests"), os.path.join(self.export_sources_folder, "tests"))
+        copy(self, "*", os.path.join(self.recipe_folder, self._cura_plugin_name), os.path.join(self.export_sources_folder, self._cura_plugin_name))
 
     def config_options(self):
         if self.settings.os == "Windows":
