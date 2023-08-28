@@ -13,7 +13,7 @@ from cura.CuraApplication import CuraApplication
 from . import constants
 
 
-catalog = i18nCatalog("cura")
+catalog = i18nCatalog("curaengine_plugin_gradual_flow")
 
 
 class GradualFlowPlugin(BackendPlugin):
