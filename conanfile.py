@@ -53,15 +53,30 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
             "visual_studio": "17",
         }
 
+    @property
+    def _cura_plugin_name(self):
+        return "CuraEngineGradualFlow"
+
     def _generate_cmdline(self):
         with open(os.path.join(self.recipe_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
             template = Template(f.read())
 
         version = Version(self.version)
         with open(os.path.join(self.recipe_folder, "include", "plugin", "cmdline.h"), "w") as f:
-            f.write(template.render(cura_plugin_name="CuraEngineGradualFlow",  # TODO: get this from the conf
+            f.write(template.render(cura_plugin_name=self._cura_plugin_name,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
                                     curaengine_plugin_name=self.name))
+
+    def _generate_cura_plugin_constants(self):
+        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "constants.py.jinja"), "r") as f:
+            template = Template(f.read())
+
+        version = Version(self.version)
+        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "constants.py"), "w") as f:
+            f.write(template.render(cura_plugin_name=self._cura_plugin_name,
+                                    version=f"{version.major}.{version.minor}.{version.patch}",
+                                    curaengine_plugin_name=self.name,
+                                    settings_prefix=f"_plugin__{self._cura_plugin_name.lower()}__{version.major}_{version.minor}_{version.patch}_"))
 
 
     def export_sources(self):
@@ -117,6 +132,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     def generate(self):
         self._generate_cmdline()
+        self._generate_cura_plugin_constants()
 
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
