@@ -125,6 +125,29 @@ jobs:
                         plugin_inst/curaengine_plugin_gradual_flow
                     retention-days: 5
 
+            -   name: Upload the cura plugin
+                uses: actions/upload-artifact@v3
+                with:
+                    name: linux-cura-plugin
+                    path: |
+                        plugin_inst/CuraEngineGradualFlow/**/*
+                    retention-days: 5
+
+            -   name: Write the run info
+                shell: python
+                run: |
+                    import os
+                    with open("run_info.sh", "w") as f:
+                        f.writelines(f'echo "PLUGIN_VERSION_FULL={os.environ["PLUGIN_VERSION_FULL"]}" >> $GITHUB_ENV\n')
+
+            -   name: Upload the run info
+                uses: actions/upload-artifact@v3
+                with:
+                    name: linux-run-info
+                    path: |
+                        run_info.sh
+                    retention-days: 5
+
     notify-export:
         if: ${{ always() }}
         needs: [ cura-installer-create ]

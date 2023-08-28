@@ -34,15 +34,6 @@ jobs:
             operating_system: ubuntu-22.04
         secrets: inherit
 
-    linux-legacy-installer:
-        uses: ./.github/workflows/linux.yml
-        with:
-            plugin_conan_version: ${{ inputs.plugin_conan_version }}
-            conan_args: ${{ inputs.conan_args }}
-            architecture: X64
-            operating_system: ubuntu-20.04
-        secrets: inherit
-
     macos-installer:
         uses: ./.github/workflows/macos.yml
         with:
@@ -68,3 +59,50 @@ jobs:
         steps:
             -   name: Checkout
                 uses: actions/checkout@v3
+
+            -   name: Download the run info
+                uses: actions/download-artifact@v2
+                with:
+                    name: linux-run-info
+
+            -   name: Set the run info as environment variables
+                run: |
+                    . run_info.sh 
+
+            -   name: Download the Cura plugin
+                uses: actions/download-artifact@v2
+                with:
+                    name: linux-cura-plugin
+                    path: cura-plugin
+
+            -   name: Download linux modern binary artifacts
+                uses: actions/download-artifact@v2
+                with:
+                    name: Linux-X64
+                    path: cura-plugin/CuraEngineGradualFlow/x86_64/Linux
+
+            -   name: Download mac x64 binary artifacts
+                uses: actions/download-artifact@v2
+                with:
+                    name: Macos-X64
+                    path: cura-plugin/CuraEngineGradualFlow/x86_64/Darwin
+
+            -   name: Download mac arm binaries artifacts
+                uses: actions/download-artifact@v2
+                with:
+                    name: Macos-ARM64
+                    path: cura-plugin/CuraEngineGradualFlow/arm64/Darwin
+
+            -   name: Download win X64 binaries artifacts
+                uses: actions/download-artifact@v2
+                with:
+                    name: Windows-X64
+                    path: cura-plugin/CuraEngineGradualFlow/x86_64/Windows
+
+            -   name: Upload the Cura plugin source
+                uses: actions/upload-artifact@v3
+                with:
+                    name: cura-plugin
+                    path: |
+                        cura-plugin/CuraEngineGradualFlow/**/*
+                    retention-days: 5
