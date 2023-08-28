@@ -136,3 +136,4 @@ CMakeUserPresets.json
 include/plugin/cmdline.h
 CuraEngineGradualFlow/constants.py
 CuraEngineGradualFlow/plugin.json
+CuraEngineGradualFlow/package.json

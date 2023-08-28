@@ -99,6 +99,21 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     api_version=self._api_version,
                                     sdk_versions=self._sdk_versions))
 
+    def _generate_package_metadata(self):
+        with open(os.path.join(self.recipe_folder, "templates", "cura_plugin", "package.json.jinja"), "r") as f:
+            template = Template(f.read())
+
+        with open(os.path.join(self.recipe_folder, self._cura_plugin_name, "package.json"), "w") as f:
+            f.write(template.render(author_id=self.author.lower(),
+                                    author=self.author,
+                                    website_author=self.homepage,
+                                    description=self.description,
+                                    display_name=self._cura_plugin_name,
+                                    package_id=self._cura_plugin_name.lower(),
+                                    version=self.version,
+                                    website=self.url
+                                    ))
+
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
         copy(self, "*.jinja", os.path.join(self.recipe_folder, "templates"), os.path.join(self.export_sources_folder, "templates"))
@@ -154,6 +169,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self._generate_cmdline()
         self._generate_cura_plugin_constants()
         self._generate_plugin_metadata()
+        self._generate_package_metadata()
 
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
