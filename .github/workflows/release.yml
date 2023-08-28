@@ -6,7 +6,7 @@ on:
         inputs:
             plugin_conan_version:
                 description: 'Plugin Conan Version'
-                default: '<plugin_conan_package>/latest@ultimaker/testing'
+                default: 'curaengine_plugin_gradual_flow/latest@ultimaker/testing'
                 required: true
                 type: string
             conan_args:
