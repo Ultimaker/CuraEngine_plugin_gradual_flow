@@ -73,6 +73,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         version = Version(self.version)
         with open(os.path.join(self.source_folder, "include", "plugin", "cmdline.h"), "w") as f:
             f.write(template.render(cura_plugin_name=self._cura_plugin_name,
+                                    description=self.description,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
                                     curaengine_plugin_name=self.name))
 
