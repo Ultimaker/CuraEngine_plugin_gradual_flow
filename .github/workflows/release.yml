@@ -107,3 +107,15 @@ jobs:
                     path: |
                         cura-plugin/CuraEngineGradualFlow/**/*
                     retention-days: 5
+
+            -   uses: fieldOfView/cura-plugin-packager-action@main
+                with:
+                    source_folder: "cura-plugin/CuraEngineGradualFlow"
+                    package_info_path: "cura-plugin/CuraEngineGradualFlow/package.json"
+
+            -   uses: "marvinpinto/action-automatic-releases@latest"
+                with:
+                    repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                    prerelease: true
+                    files: |
+                        *.curapackage
