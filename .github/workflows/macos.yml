@@ -1,0 +1,91 @@
+name: Macos Installer
+run-name: ${{ inputs.plugin_conan_version }} for Macos-${{ inputs.architecture }} by @${{ github.actor }}
+
+on:
+    workflow_dispatch:
+        inputs:
+            plugin_conan_version:
+                description: 'Plugin Conan Version'
+                default: '<plugin_conan_package>/latest@ultimaker/testing'
+                required: true
+                type: string
+            conan_args:
+                description: 'Conan args: eq.: --require-override'
+                default: ''
+                required: false
+                type: string
+            architecture:
+                description: 'Architecture'
+                required: true
+                default: 'X64'
+                type: choice
+                options:
+                    - X64
+                    - ARM64
+            operating_system:
+                description: 'OS'
+                required: true
+                default: 'macos-11'
+                type: choice
+                options:
+                    - self-hosted
+                    - macos-11
+                    - macos-12
+    workflow_call:
+        inputs:
+            plugin_conan_version:
+                description: 'Plugin Conan Version'
+                default: '<plugin_conan_package>/latest@ultimaker/testing'
+                required: true
+                type: string
+            conan_args:
+                description: 'Conan args: eq.: --require-override'
+                default: ''
+                required: false
+                type: string
+            enterprise:
+                description: 'Build Cura as an Enterprise edition'
+                default: false
+                required: true
+                type: boolean
+            staging:
+                description: 'Use staging API'
+                default: false
+                required: true
+                type: boolean
+            architecture:
+                description: 'Architecture'
+                required: true
+                default: 'X64'
+                type: string
+            operating_system:
+                description: 'OS'
+                required: true
+                default: 'macos-11'
+                type: string
+
+env:
+    CONAN_LOGIN_USERNAME_CURA: ${{ secrets.CONAN_USER }}
+    CONAN_PASSWORD_CURA: ${{ secrets.CONAN_PASS }}
+    PLUGIN_CONAN_VERSION: ${{ inputs.plugin_conan_version }}
+
+jobs:
+    cura-installer-create:
+        runs-on: ${{ inputs.operating_system }}
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+    notify-export:
+        if: ${{ always() }}
+        needs: [ cura-installer-create ]
+
+        uses: ultimaker/cura/.github/workflows/notify.yml@main
+        with:
+            success: ${{ contains(join(needs.*.result, ','), 'success') }}
+            success_title: "Create the Cura distributions"
+            success_body: "Installers for ${{ inputs.plugin_conan_version }}"
+            failure_title: "Failed to create the Cura distributions"
+            failure_body: "Failed to create at least 1 installer for ${{ inputs.plugin_conan_version }}"
+        secrets: inherit
