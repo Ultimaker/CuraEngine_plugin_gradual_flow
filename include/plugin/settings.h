@@ -32,10 +32,10 @@ struct Settings
     {
         for (const auto& [idx, extruder_setting] : request.extruder_settings() | ranges::views::enumerate)
         {
-            const auto gradual_flow_enabled_setting = retrieveSettings("gradual_flow_enabled", request, metadata);
-            const auto max_flow_acceleration_setting = retrieveSettings("max_flow_acceleration", request, metadata);
-            const auto layer_0_max_flow_acceleration_setting = retrieveSettings("layer_0_max_flow_acceleration", request, metadata);
-            const auto gradual_flow_discretisation_step_size_setting = retrieveSettings("gradual_flow_discretisation_step_size", request, metadata);
+            const auto gradual_flow_enabled_setting = retrieveSettings("gradual_flow_enabled", extruder_setting, metadata);
+            const auto max_flow_acceleration_setting = retrieveSettings("max_flow_acceleration", extruder_setting, metadata);
+            const auto layer_0_max_flow_acceleration_setting = retrieveSettings("layer_0_max_flow_acceleration", extruder_setting, metadata);
+            const auto gradual_flow_discretisation_step_size_setting = retrieveSettings("gradual_flow_discretisation_step_size", extruder_setting, metadata);
 
             if (! gradual_flow_enabled_setting.has_value() || ! max_flow_acceleration_setting.has_value() || ! layer_0_max_flow_acceleration_setting.has_value()
                 || ! gradual_flow_discretisation_step_size_setting.has_value())

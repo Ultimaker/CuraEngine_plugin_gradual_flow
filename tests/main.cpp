@@ -1,3 +1,6 @@
+// Copyright (c) 2023 UltiMaker
+// CuraEngine is released under the terms of the AGPLv3 or higher.
+
 #define CATCH_CONFIG_MAIN
 
 #include "gradual_flow/gcode_path.h"
@@ -8,8 +11,8 @@
 #include <range/v3/view/transform.hpp>
 
 /*
- * Mocks a GCodePath message with a given velocity. The default configuration has a line width of 400, a layer thickness
  * of 200, and all flow/line width ratios set to 1.0. This means that the extrusion volume is 400 * 200 * 1.0 = 80000.
+ * Mocks a GCodePath message with a given velocity. The default configuration has a line width of 400, a layer thickness
  *
  * @param velocity The velocity to set in the message. Defaults to 100.
  *
@@ -43,6 +46,7 @@ TEST_CASE("segment duration long line")
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
         .discretized_duration = discretized_duration,
+        .target_end_flow = path.targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -138,6 +142,7 @@ TEST_CASE("segment duration small segments")
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
         .discretized_duration = discretized_duration,
+        .target_end_flow = path.targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -177,6 +182,7 @@ TEST_CASE("forward discretization steps")
         .current_flow = initial_flow,
         .flow_acceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
+        .target_end_flow = path.targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -211,6 +217,7 @@ TEST_CASE("discretization steps backward")
         .current_flow = path_fast.flow(),
         .flow_acceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
+        .target_end_flow = path_slow.targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
