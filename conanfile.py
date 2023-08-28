@@ -137,13 +137,14 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+        self.cpp.package.resdirs = [self._cura_plugin_name]
 
     def requirements(self):
         self.requires("protobuf/3.21.9")
         self.requires("boost/1.82.0")
         self.requires("asio-grpc/2.6.0")
         self.requires("openssl/1.1.1l")
-        self.requires("spdlog/1.11.0")
+        self.requires("spdlog/1.10.0")
         self.requires("docopt.cpp/0.6.3")
         self.requires("range-v3/0.12.0")
         self.requires("clipper/6.4.2")
