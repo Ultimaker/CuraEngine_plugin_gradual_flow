@@ -179,7 +179,6 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
         tc.variables["ENABLE_TESTS"] = self.options.enable_testing
-        # Boolean values are preferred instead of "ON"/"OFF"
         if is_msvc(self):
             tc.variables["USE_MSVC_RUNTIME_LIBRARY_DLL"] = not is_msvc_static_runtime(self)
         tc.cache_variables["CMAKE_POLICY_DEFAULT_CMP0077"] = "NEW"
