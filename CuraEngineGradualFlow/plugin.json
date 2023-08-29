@@ -1,0 +1,8 @@
+{
+  "name": "CuraEngine Gradual Flow plugin",
+  "author": "UltiMaker",
+  "description": "Smooth flow gradually to limit high-flow jumps",
+  "api": 8,
+  "version": "0.1.0",
+  "i18n-catalog": "cura"
+}
