@@ -175,6 +175,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self.requires("curaengine_grpc_definitions/latest@ultimaker/cura_10446")
 
     def build_requirements(self):
+        self.test_requires("standardprojectsettings/[>=0.1.0]@ultimaker/stable")
         if self.options.enable_testing:
             self.test_requires("catch2/[>=2.13.8]")
 

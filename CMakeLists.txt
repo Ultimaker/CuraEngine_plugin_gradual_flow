@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 project(curaengine_plugin_gradual_flow)
+find_package(standardprojectsettings REQUIRED)
 
 find_package(Protobuf REQUIRED)
 find_package(spdlog REQUIRED)
@@ -25,8 +26,10 @@ set(HDRS include/gradual_flow/boost_tags.h
         include/plugin/settings.h)
 
 add_library(curaengine_plugin_gradual_flow_lib INTERFACE ${HDRS})
+use_threads(curaengine_plugin_gradual_flow_lib)
 
 add_executable(curaengine_plugin_gradual_flow src/main.cpp)
+use_threads(curaengine_plugin_gradual_flow)
 
 target_include_directories(curaengine_plugin_gradual_flow_lib
         INTERFACE
