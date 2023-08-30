@@ -129,7 +129,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
             template = Template(f.read())
 
         version = Version(self.version)
-        with open(os.path.join(self.source_folder, self._cura_plugin_name, "bundled.json"), "w") as f:
+        with open(os.path.join(self.source_folder, self._cura_plugin_name, f"bundled_{self._cura_plugin_name}.json"), "w") as f:
             f.write(template.render(package_id=self._cura_plugin_name,
                                     display_name=self._cura_plugin_name,
                                     description=self.description,
