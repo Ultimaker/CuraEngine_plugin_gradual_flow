@@ -32,7 +32,9 @@ struct GCodePath
 
     double targetSpeed() const // um/s
     {
-        return original_gcode_path_data->config().speed_derivatives().velocity() * 1e3;
+        return original_gcode_path_data->speed_derivatives().velocity() *
+               original_gcode_path_data->speed_factor() *
+               original_gcode_path_data->speed_back_pressure_factor() * 1e3;
     }
 
     /*
@@ -42,7 +44,7 @@ struct GCodePath
      */
     bool isTravel() const
     {
-        return targetFlow() == 0;
+        return targetFlow() <= 0;
     }
 
     /*
@@ -52,8 +54,8 @@ struct GCodePath
      */
     double extrusionVolumePerMm() const // um^3/um
     {
-        return original_gcode_path_data->flow() * original_gcode_path_data->width_factor() * original_gcode_path_data->config().line_width()
-             * original_gcode_path_data->config().layer_thickness() * original_gcode_path_data->config().flow_ratio();
+        return original_gcode_path_data->flow() * original_gcode_path_data->width_factor() * original_gcode_path_data->line_width()
+             * original_gcode_path_data->layer_thickness() * original_gcode_path_data->flow_ratio();
     }
 
     /*
@@ -276,7 +278,7 @@ struct GCodePath
             point_message->set_y(point.Y);
         }
 
-        message.mutable_config()->mutable_speed_derivatives()->set_velocity(speed * 1e-3);
+        message.mutable_speed_derivatives()->set_velocity(speed * 1e-3);
 
         return message;
     }

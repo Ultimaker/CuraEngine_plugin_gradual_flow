@@ -23,10 +23,12 @@ cura::plugins::v0::GCodePath mock_msg(double velocity = 100)
     cura::plugins::v0::GCodePath original_gcode_path_data;
     original_gcode_path_data.set_flow(1.0);
     original_gcode_path_data.set_width_factor(1.0);
-    original_gcode_path_data.mutable_config()->set_line_width(400);
-    original_gcode_path_data.mutable_config()->set_layer_thickness(200);
-    original_gcode_path_data.mutable_config()->set_flow_ratio(1.0);
-    original_gcode_path_data.mutable_config()->mutable_speed_derivatives()->set_velocity(velocity);
+    original_gcode_path_data.set_speed_back_pressure_factor(1.0);
+    original_gcode_path_data.set_speed_factor(1.0);
+    original_gcode_path_data.set_line_width(400);
+    original_gcode_path_data.set_layer_thickness(200);
+    original_gcode_path_data.set_flow_ratio(1.0);
+    original_gcode_path_data.mutable_speed_derivatives()->set_velocity(velocity);
     return original_gcode_path_data;
 }
 
@@ -261,6 +263,7 @@ TEST_CASE("flow limit forward backward target speed reached")
         .current_flow = paths.front().flow(),
         .flow_acceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
+        .target_end_flow = paths.back().targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
@@ -303,6 +306,7 @@ TEST_CASE("flow limit forward backward target speed not reached")
         .current_flow = paths.front().flow(),
         .flow_acceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
+        .target_end_flow = paths.back().targetFlow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
