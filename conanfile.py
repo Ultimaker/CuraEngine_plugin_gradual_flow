@@ -64,7 +64,12 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     @property
     def _sdk_versions(self):
-        return ["8.3.0"]
+        return ["8.4.0"]
+
+    @property
+    def _max_sdk_version(self):
+        sorted_versions = sorted(self._sdk_versions, key=lambda v: Version(v))
+        return sorted_versions[-1]
 
     def _generate_cmdline(self):
         with open(os.path.join(self.source_folder, "templates", "include", "plugin", "cmdline.h.jinja"), "r") as f:
@@ -114,8 +119,25 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     display_name=self._cura_plugin_name,
                                     package_id=self._cura_plugin_name,
                                     version=f"{version.major}.{version.minor}.{version.patch}",
+                                    sdk_version_major=Version(self._max_sdk_version).major,
+                                    sdk_version=self._max_sdk_version,
                                     website=self.url
                                     ))
+
+    def _generate_bundled_metadata(self):
+        with open(os.path.join(self.source_folder, "templates", "cura_plugin", "bundled.json.jinja"), "r") as f:
+            template = Template(f.read())
+
+        version = Version(self.version)
+        with open(os.path.join(self.source_folder, self._cura_plugin_name, "bundled.json"), "w") as f:
+            f.write(template.render(package_id=self._cura_plugin_name,
+                                    display_name=self._cura_plugin_name,
+                                    description=self.description,
+                                    version=f"{version.major}.{version.minor}.{version.patch}",
+                                    sdk_version=self._max_sdk_version,
+                                    author=self.author,
+                                    website=self.url,
+                                    website_author=self.homepage))
 
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
@@ -175,6 +197,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self._generate_cura_plugin_constants()
         self._generate_plugin_metadata()
         self._generate_package_metadata()
+        self._generate_bundled_metadata()
 
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
