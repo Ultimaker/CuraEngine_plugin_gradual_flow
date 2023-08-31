@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
@@ -12,7 +11,7 @@ from conan.tools.scm import Version
 
 from jinja2 import Template
 
-required_conan_version = ">=1.53.0"
+required_conan_version = ">=1.58.0 <2.0.0"
 
 
 class CuraEngineGradualFlowPluginConan(ConanFile):
@@ -23,17 +22,15 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     url = "https://github.com/Ultimaker/CuraEngine_plugin_gradual_flow"
     homepage = "https://ultimaker.com"
     topics = ("protobuf", "asio", "plugin", "curaengine", "gcode-generation", "3D-printing")
-    package_type = "library"
+    package_type = "application"
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "enable_testing": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
-        "enable_testing": False,
     }
 
     def set_version(self):
@@ -176,7 +173,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     def build_requirements(self):
         self.test_requires("standardprojectsettings/[>=0.1.0]@ultimaker/stable")
-        if self.options.enable_testing:
+        if not self.conf.get("tools.build:skip_test", False, check_type=bool):
             self.test_requires("catch2/[>=2.13.8]")
 
     def validate(self):
@@ -202,7 +199,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
         # BUILD_SHARED_LIBS and POSITION_INDEPENDENT_CODE are automatically parsed when self.options.shared or self.options.fPIC exist
         tc = CMakeToolchain(self)
-        tc.variables["ENABLE_TESTS"] = self.options.enable_testing
+        tc.variables["ENABLE_TESTS"] = not self.conf.get("tools.build:skip_test", False, check_type=bool)
         if is_msvc(self):
             tc.variables["USE_MSVC_RUNTIME_LIBRARY_DLL"] = not is_msvc_static_runtime(self)
         tc.cache_variables["CMAKE_POLICY_DEFAULT_CMP0077"] = "NEW"
