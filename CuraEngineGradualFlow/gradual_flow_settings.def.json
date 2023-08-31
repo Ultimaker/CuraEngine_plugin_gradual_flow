@@ -5,7 +5,7 @@
         "label": "Gradual flow enabled",
         "description": "Enable gradual flow changes. When enabled, the flow is gradually increased/decreased to the target flow. This is useful for printers with a bowden tube where the flow is not immediately changed when the extruder motor starts\/stops.",
         "type": "bool",
-        "default_value": true,
+        "default_value": false,
         "settable_per_mesh": false,
         "settable_per_extruder": true
       },
