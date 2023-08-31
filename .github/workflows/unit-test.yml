@@ -47,7 +47,7 @@ jobs:
   conan-recipe-version:
     uses: ultimaker/cura/.github/workflows/conan-recipe-version.yml@main
     with:
-      project_name: curaengine
+      project_name: curaengine_plugin_gradual_flow
 
   testing:
     runs-on: ubuntu-22.04
