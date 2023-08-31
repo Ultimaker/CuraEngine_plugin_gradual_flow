@@ -174,7 +174,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
     def build_requirements(self):
         self.test_requires("standardprojectsettings/[>=0.1.0]@ultimaker/stable")
         if not self.conf.get("tools.build:skip_test", False, check_type=bool):
-            self.test_requires("catch2/[>=2.13.8]")
+            self.test_requires("catch2/[>=3.4.0]")
 
     def validate(self):
         # validate the minimum cpp standard supported. For C++ projects only
