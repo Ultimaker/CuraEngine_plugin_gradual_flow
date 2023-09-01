@@ -26,7 +26,7 @@ cura::plugins::v0::GCodePath mock_msg(double velocity = 100)
     original_gcode_path_data.set_speed_back_pressure_factor(1.0);
     original_gcode_path_data.set_speed_factor(1.0);
     original_gcode_path_data.set_line_width(400);
-    original_gcode_path_data.set_layer_thickness(200);
+    original_gcode_path_data.set_layer_thickness(250);
     original_gcode_path_data.set_flow_ratio(1.0);
     original_gcode_path_data.mutable_speed_derivatives()->set_velocity(velocity);
     return original_gcode_path_data;
@@ -47,6 +47,7 @@ TEST_CASE("segment duration long line")
     plugin::gradual_flow::GCodeState state {
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
+        .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
     };
@@ -74,6 +75,7 @@ TEST_CASE("Total length remains same")
     plugin::gradual_flow::GCodeState state {
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
+        .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
     };
 
@@ -108,6 +110,7 @@ TEST_CASE("Total length remains same short line segments")
     plugin::gradual_flow::GCodeState state {
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
+        .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
     };
 
@@ -143,6 +146,7 @@ TEST_CASE("segment duration small segments")
     {
         .current_flow = 0.,
         .flow_acceleration = 1000000000.,
+        .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
     };
@@ -183,6 +187,7 @@ TEST_CASE("forward discretization steps")
     {
         .current_flow = initial_flow,
         .flow_acceleration = flow_acceleration,
+        .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
     };
@@ -218,6 +223,7 @@ TEST_CASE("discretization steps backward")
     {
         .current_flow = path_fast.flow(),
         .flow_acceleration = flow_acceleration,
+        .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = path_slow.targetFlow(),
     };
@@ -262,6 +268,7 @@ TEST_CASE("flow limit forward backward target speed reached")
     {
         .current_flow = paths.front().flow(),
         .flow_acceleration = flow_acceleration,
+        .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
     };
@@ -305,6 +312,7 @@ TEST_CASE("flow limit forward backward target speed not reached")
     {
         .current_flow = paths.front().flow(),
         .flow_acceleration = flow_acceleration,
+        .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
     };
@@ -314,5 +322,67 @@ TEST_CASE("flow limit forward backward target speed not reached")
     for (auto& path: limited_flow_acceleration_paths)
     {
         REQUIRE(path.flow() < path_middle.flow());
+    }
+}
+
+
+TEST_CASE("flow deceleration")
+{
+    const auto original_gcode_path_data_100mm_s = mock_msg(100); // 100mm/s
+    const auto original_gcode_path_data_10mm_s = mock_msg(10); // 10mm/s
+    plugin::gradual_flow::GCodePath path_left
+            {
+                    .original_gcode_path_data = &original_gcode_path_data_10mm_s,
+                    .points = { { 0, 10000 }, { 10000000, 10000 } },
+            };
+    plugin::gradual_flow::GCodePath path_middle
+            {
+                    .original_gcode_path_data = &original_gcode_path_data_100mm_s,
+                    .points = { { 10000000, 10000 }, { 20000000, 10000 } },
+            };
+    plugin::gradual_flow::GCodePath path_right
+            {
+                    .original_gcode_path_data = &original_gcode_path_data_10mm_s,
+                    .points = { { 20000000, 10000 }, { 30000000, 20000 } },
+            };
+    std::vector<plugin::gradual_flow::GCodePath> paths { path_left, path_middle, path_right };
+
+    const auto discretized_duration = 0.1;
+    const auto flow_acceleration = 2000000000.;
+    const auto flow_deceleration = 4000000000.;
+
+    plugin::gradual_flow::GCodeState state
+    {
+        .current_flow = paths.front().flow(),
+        .flow_acceleration = flow_acceleration,
+        .flow_deceleration = flow_deceleration,
+        .discretized_duration = discretized_duration,
+        .target_end_flow = paths.back().targetFlow(),
+    };
+
+    const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
+
+    {
+        auto i = 0;
+        for (auto flow = path_left.flow(); flow < path_middle.flow(); flow += flow_acceleration * discretized_duration) {
+
+            REQUIRE(Catch::Approx(limited_flow_acceleration_paths[i].flow()).epsilon(0.01) == flow);
+            i++;
+        }
+
+        const auto expected_steps = ceil((path_middle.flow() - path_left.flow()) / flow_acceleration / discretized_duration);
+        REQUIRE(i == expected_steps);
+    }
+
+    {
+        auto i = 0;
+        for (auto flow = path_right.flow(); flow < path_middle.flow(); flow += flow_deceleration * discretized_duration)
+        {
+            REQUIRE(Catch::Approx(limited_flow_acceleration_paths[limited_flow_acceleration_paths.size() - i - 1].flow()).epsilon(0.01) == flow);
+            i ++;
+        }
+
+        const auto expected_steps = ceil((path_middle.flow() - path_right.flow()) / flow_deceleration / discretized_duration);
+        REQUIRE(i == expected_steps);
     }
 }

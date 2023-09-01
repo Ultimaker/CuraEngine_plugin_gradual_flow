@@ -288,6 +288,7 @@ struct GCodeState
 {
     double current_flow{ 0.0 }; // um^3/s
     double flow_acceleration{ 0.0 }; // um^3/s^2
+    double flow_deceleration{ 0.0 }; // um^3/s^2
     double discretized_duration{ 0.0 }; // s
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
@@ -380,7 +381,8 @@ struct GCodeState
         // iteration an increased flow of flow_acceleration
         while (current_flow < target_flow)
         {
-            current_flow = std::min(target_flow, current_flow + flow_acceleration * discretized_duration);
+            const auto flow_delta = (direction == utils::Forward ? flow_acceleration : flow_deceleration) * discretized_duration;
+            current_flow = std::min(target_flow, current_flow + flow_delta);
 
             const auto segment_speed = current_flow / extrusion_volume_per_mm; // um^3/s / um^3/um = um/s
 

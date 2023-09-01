@@ -112,9 +112,12 @@ struct Generate
                             | ranges::views::filter([](const auto flow) { return flow > 0.0; });
                     auto gcode_paths_non_zero_flow_view = gcode_paths | non_zero_flow_view;
 
+                    const auto flow_limit = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr];
+
                     GCodeState state{
                         .current_flow = previous_flow.at(client_metadata).contains(extruder_nr) ? previous_flow.at(client_metadata).at(extruder_nr) : 0.0,
-                        .flow_acceleration = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr],
+                        .flow_acceleration = flow_limit,
+                        .flow_deceleration = flow_limit,
                         .discretized_duration = extruder_settings.gradual_flow_discretisation_step_size[extruder_nr],
                          // take the first path's target flow as the target flow, this might
                          // not be correct, but it is safe to assume the target flow for the
