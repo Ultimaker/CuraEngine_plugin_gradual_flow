@@ -116,6 +116,7 @@ jobs:
             plugin_inst/CuraEngineGradualFlow/**/*
           retention-days: 5
 
+      # NOTE: The extension is .sh, since this isn't going to build-environment, so not on the Win build image.
       - name: Write the run info
         shell: python
         run: |
@@ -123,6 +124,7 @@ jobs:
           with open("run_info.sh", "w") as f:
               f.writelines(f'echo "PLUGIN_CONAN_VERSION={os.environ["PLUGIN_CONAN_VERSION"]}" >> $GITHUB_ENV\n')
 
+      # NOTE: The extension is .sh, since this isn't going to build-environment, so not on the Win build image.
       - name: Upload the run info
         uses: actions/upload-artifact@v3
         with:
