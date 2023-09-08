@@ -6,7 +6,13 @@
 
 #include <range/v3/range/concepts.hpp>
 
+#if __has_include(<concepts>)
 #include <concepts>
+#elif __has_include(<experimental/concepts>)
+#include <experimental/concepts>
+#define USE_EXPERIMENTAL_CONCEPTS
+#endif
+
 #include <string>
 #include <type_traits>
 
@@ -23,7 +29,7 @@ namespace concepts
 {
 
 template<class T>
-concept closable = requires(T t) { requires std::convertible_to<decltype(t.is_closed), bool>; };
+concept closable = requires(T t) { requires ranges::convertible_to<decltype(t.is_closed), bool>; };
 
 template<class T>
 concept is_closed_point_container = closable<T> && requires(T t) { t.is_closed == true; };
@@ -52,7 +58,7 @@ concept point2d_named = requires(T point) {
 * @tparam T Type to check
 */
 template<class T>
-concept point2d = point2d_named<T> || (ranges::range<T> && std::integral<typename T::value_type> && std::tuple_size_v<T> == 2);
+concept point2d = point2d_named<T> || (ranges::range<T> && ranges::integral<typename T::value_type> && std::tuple_size_v<T> == 2);
 
 template<class T>
 concept point3d_named = requires(T point) {
@@ -67,7 +73,7 @@ concept point3d_named = requires(T point) {
 * @tparam T Type to check
 */
 template<class T>
-concept point3d = point3d_named<T> || (ranges::range<T> && std::integral<typename T::value_type> && std::tuple_size_v<T> == 3);
+concept point3d = point3d_named<T> || (ranges::range<T> && ranges::integral<typename T::value_type> && std::tuple_size_v<T> == 3);
 
 template<class T>
 concept point_named = point2d_named<T> || point3d_named<T>;

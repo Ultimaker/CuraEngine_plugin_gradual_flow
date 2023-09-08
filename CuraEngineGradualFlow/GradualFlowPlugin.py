@@ -10,8 +10,10 @@ from UM.i18n import i18nCatalog
 from cura.BackendPlugin import BackendPlugin
 from cura.CuraApplication import CuraApplication
 
+from . import constants
 
-catalog = i18nCatalog("cura")
+
+catalog = i18nCatalog("curaengine_plugin_gradual_flow")
 
 
 class GradualFlowPlugin(BackendPlugin):
@@ -20,7 +22,7 @@ class GradualFlowPlugin(BackendPlugin):
         self.definition_file_paths = [Path(__file__).parent.joinpath("gradual_flow_settings.def.json").as_posix()]
         if not self.isDebug():
             if not self.binaryPath().exists():
-                Logger.error(f"Could not find curaengine_plugin_gradual_flow binary at {self.binaryPath().as_posix()}")
+                Logger.error(f"Could not find {constants.curaengine_plugin_name} binary at {self.binaryPath().as_posix()}")
             if platform.system() != "Windows" and self.binaryPath().exists():
                 st = os.stat(self.binaryPath())
                 os.chmod(self.binaryPath(), st.st_mode | stat.S_IEXEC)
@@ -35,7 +37,7 @@ class GradualFlowPlugin(BackendPlugin):
 
     def gradualFlowEnabled(self):
         # FIXME: This should only be True when we actually use it for any extruder
-        return CuraApplication.getInstance().getGlobalContainerStack().getProperty(f"_plugin__curaenginegradualflow__0_1_0__gradual_flow_enabled", "value")
+        return CuraApplication.getInstance().getGlobalContainerStack().getProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value")
 
     def getPort(self):
         return super().getPort() if not self.isDebug() else int(os.environ["CURAENGINE_GCODE_PATHS_MODIFY_PORT"])
@@ -53,4 +55,4 @@ class GradualFlowPlugin(BackendPlugin):
         machine = platform.machine()
         if machine == "AMD64":
             machine = "x86_64"
-        return Path(__file__).parent.joinpath(machine, platform.system(), f"curaengine_plugin_gradual_flow{ext}").resolve()
+        return Path(__file__).parent.joinpath(machine, platform.system(), f"{constants.curaengine_plugin_name}{ext}").resolve()

@@ -131,3 +131,10 @@ conaninfo.txt
 graph_info.json
 build/
 CMakeUserPresets.json
+
+# Generated files
+include/plugin/cmdline.h
+CuraEngineGradualFlow/constants.py
+CuraEngineGradualFlow/plugin.json
+CuraEngineGradualFlow/package.json
+CuraEngineGradualFlow/bundled_*.json
