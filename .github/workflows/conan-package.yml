@@ -23,6 +23,7 @@ on:
     paths:
       - 'include/**'
       - 'src/**'
+      - 'CuraEngineGradualFlow/**'
       - 'conanfile.py'
       - 'CMakeLists.txt'
       - '.github/workflows/conan-package.yml'
