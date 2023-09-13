@@ -35,9 +35,9 @@ class GradualFlowPlugin(BackendPlugin):
     def _on_container_load_complete(self, container_id) -> None:
         pass
 
-    def gradualFlowEnabled(self):
-        # FIXME: This should only be True when we actually use it for any extruder
-        return CuraApplication.getInstance().getGlobalContainerStack().getProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value")
+    def usePlugin(self):
+        machine_manager = CuraApplication.getInstance().getMachineManager()
+        return any([extr.getProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value") for extr in machine_manager.activeMachine.extruderList if extr.hasProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value")])
 
     def getPort(self):
         return super().getPort() if not self.isDebug() else int(os.environ["CURAENGINE_GCODE_PATHS_MODIFY_PORT"])
@@ -46,7 +46,7 @@ class GradualFlowPlugin(BackendPlugin):
         return not hasattr(sys, "frozen") and os.environ.get("CURAENGINE_GCODE_PATHS_MODIFY_PORT", None) is not None
 
     def start(self):
-        if self.gradualFlowEnabled() and not self.isDebug():
+        if not self.isDebug():
             super().start()
 
     def binaryPath(self) -> Path:
