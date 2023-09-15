@@ -113,7 +113,6 @@ struct Generate
                     };
 
                     const auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);
-                    auto limited_flow_acceleration_paths_non_zero_flow_view = limited_flow_acceleration_paths | non_zero_flow_view;
                     // Copy newly generated paths to response
 
                     for (const auto& [index, gcode_path] : limited_flow_acceleration_paths | ranges::views::enumerate)
