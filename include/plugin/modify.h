@@ -34,10 +34,6 @@ struct Generate
 
     boost::asio::awaitable<void> run()
     {
-        // previous_flow stores the previous flow value, the flow can differ per extruder
-        // so each extruder is stored separately. The key in the map is the client-uuid
-        // and the extruder_nr pair.
-        std::unordered_map<std::string, std::unordered_map<int64_t, double>> previous_flow;
         while (true)
         {
             grpc::ServerContext server_context;
@@ -62,10 +58,6 @@ struct Generate
                 }
                 else
                 {
-                    if (! previous_flow.contains(client_metadata))
-                    {
-                        previous_flow.emplace(client_metadata, std::unordered_map<int64_t, double>());
-                    }
 
                     // Parse the gcode paths from the request
                     std::vector<GCodePath> gcode_paths;
@@ -107,27 +99,27 @@ struct Generate
                         gcode_paths.push_back(gcode_path);
                     }
 
-                    constexpr auto non_zero_flow_view
-                            = ranges::views::transform([](const auto& path) { return path.flow(); })
-                            | ranges::views::filter([](const auto flow) { return flow > 0.0; });
+                    constexpr auto non_zero_flow_view = ranges::views::transform([](const auto& path){ return path.flow(); }) | ranges::views::drop_while([](const auto flow){ return flow == 0.0; });
                     auto gcode_paths_non_zero_flow_view = gcode_paths | non_zero_flow_view;
 
-                    const auto flow_limit = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr];
+                    const auto flow_limit
+                        = request.layer_nr() == 0 ? extruder_settings.layer_0_max_flow_acceleration[extruder_nr] : extruder_settings.max_flow_acceleration[extruder_nr];
+
+                    auto target_flow = ranges::empty(gcode_paths_non_zero_flow_view) ? 0.0 : ranges::front(gcode_paths_non_zero_flow_view);
 
                     GCodeState state{
-                        .current_flow = previous_flow.at(client_metadata).contains(extruder_nr) ? previous_flow.at(client_metadata).at(extruder_nr) : 0.0,
+                        .current_flow = target_flow,
                         .flow_acceleration = flow_limit,
                         .flow_deceleration = flow_limit,
                         .discretized_duration = extruder_settings.gradual_flow_discretisation_step_size[extruder_nr],
-                         // take the first path's target flow as the target flow, this might
-                         // not be correct, but it is safe to assume the target flow for the
-                         // next layer is the same as the target flow of the current layer
-                        .target_end_flow = gcode_paths_non_zero_flow_view.empty() ? 0.0 : ranges::front(gcode_paths_non_zero_flow_view),
+                        // take the first path's target flow as the target flow, this might
+                        // not be correct, but it is safe to assume the target flow for the
+                        // next layer is the same as the target flow of the current layer
+                        .target_end_flow = target_flow,
                     };
 
                     const auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);
                     auto limited_flow_acceleration_paths_non_zero_flow_view = limited_flow_acceleration_paths | non_zero_flow_view;
-                    previous_flow.at(client_metadata).emplace(extruder_nr, limited_flow_acceleration_paths_non_zero_flow_view.empty() ? 0.0 : ranges::back(limited_flow_acceleration_paths_non_zero_flow_view));
                     // Copy newly generated paths to response
 
                     for (const auto& [index, gcode_path] : limited_flow_acceleration_paths | ranges::views::enumerate)
