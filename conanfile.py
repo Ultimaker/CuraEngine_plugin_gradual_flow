@@ -170,7 +170,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self.requires("clipper/6.4.2")
         self.requires("ctre/3.7.2")
         self.requires("neargye-semver/0.3.0")
-        self.requires("curaengine_grpc_definitions/(latest)@ultimaker/testing")
+        self.requires("curaengine_grpc_definitions/(latest)@ultimaker/cura_11035")  # FIXME!: Put back to .../testing after merge!
 
     def build_requirements(self):
         self.test_requires("standardprojectsettings/[>=0.1.0]@ultimaker/stable")
