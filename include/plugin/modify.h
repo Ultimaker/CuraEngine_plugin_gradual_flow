@@ -62,41 +62,34 @@ struct Generate
                     // Parse the gcode paths from the request
                     std::vector<GCodePath> gcode_paths;
 
-                    for (int i = 0; i < request.gcode_paths().size(); ++i)
+                    // Process first path
+                    for (const auto& path : request.gcode_paths() | ranges::views::take(1))
                     {
-                        const auto& gcode_path_msg = request.gcode_paths().at(i);
-
                         geometry::polyline<> points;
-                        /*
-                         * We need to add the last point of the previous path to the current path
-                         * since the paths in Cura are a connected line string and a new path begins
-                         * where the previous path ends (see figure below).
-                         *    {                Path A            } {          Path B        } { ...etc
-                         *    a.1-----------a.2------a.3---------a.4------b.1--------b.2--- c.1-------
-                         * For our purposes it is easier that each path is a separate line string, and
-                         * no knowledge of the previous path is needed.
-                         */
-                        if (i >= 1)
+                        for (const auto& point : path.path().path())
                         {
-                            const auto& prev_path = &request.gcode_paths().at(i - 1).path().path();
-                            if (! prev_path->empty())
-                            {
-                                const auto& point = prev_path->at(prev_path->size() - 1); // prev_path->end();
-                                points.push_back(ClipperLib::IntPoint(point.x(), point.y()));
-                            }
+                            points.emplace_back(ClipperLib::IntPoint{ point.x(), point.y() });
                         }
+                        gcode_paths.emplace_back(GCodePath{.original_gcode_path_data = &path, .points = points});
+                    }
 
-                        for (const auto& point : gcode_path_msg.path().path())
+                    /* Process remaining paths
+                     * We need to add the last point of the previous path to the current path
+                     * since the paths in Cura are a connected line string and a new path begins
+                     * where the previous path ends (see figure below).
+                     *    {                Path A            } {          Path B        } { ...etc
+                     *    a.1-----------a.2------a.3---------a.4------b.1--------b.2--- c.1-------
+                     * For our purposes it is easier that each path is a separate line string, and
+                     * no knowledge of the previous path is needed.
+                     */
+                    for (const auto& path : request.gcode_paths() | ranges::views::drop(1))
+                    {
+                        geometry::polyline<> points { ranges::back(ranges::back(gcode_paths).points) };
+                        for (const auto& point : path.path().path())
                         {
-                            points.push_back(ClipperLib::IntPoint(point.x(), point.y()));
+                            points.emplace_back(ClipperLib::IntPoint{ point.x(), point.y() });
                         }
-
-                        GCodePath gcode_path{
-                            .original_gcode_path_data = &gcode_path_msg,
-                            .points = points,
-                        };
-
-                        gcode_paths.push_back(gcode_path);
+                        gcode_paths.emplace_back(GCodePath{.original_gcode_path_data = &path, .points = points});
                     }
 
                     constexpr auto non_zero_flow_view = ranges::views::transform([](const auto& path){ return path.flow(); }) | ranges::views::drop_while([](const auto flow){ return flow == 0.0; });
