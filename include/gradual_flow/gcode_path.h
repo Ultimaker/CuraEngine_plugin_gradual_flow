@@ -23,12 +23,21 @@
 namespace plugin::gradual_flow
 {
 
+enum class FlowState
+{
+    STABLE,
+    TRANSITION,
+    UNDEFINED
+};
+
 struct GCodePath
 {
     const cura::plugins::v0::GCodePath* original_gcode_path_data;
     geometry::polyline<> points;
-    double speed = targetSpeed(); // um/s
-    double flow_ = extrusionVolumePerMm() * speed; // um/s
+    double speed { targetSpeed() }; // um/s
+    double flow_ { extrusionVolumePerMm() * speed }; // um/s
+    bool retract { original_gcode_path_data->retract() };
+    double setpoint_flow { flow_ };
 
     double targetSpeed() const // um/s
     {
@@ -292,6 +301,9 @@ struct GCodeState
     double discretized_duration{ 0.0 }; // s
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
+    double setpoint_flow{ 0.0 }; // um^3/s
+    double undefined_state_duration{ 0.0 }; // s
+    FlowState flow_state{ FlowState::UNDEFINED };
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
     {
@@ -339,13 +351,24 @@ struct GCodeState
      */
     std::vector<GCodePath> processGcodePath(const GCodePath& path, const utils::Direction direction)
     {
-        if (path.isTravel())
+        if (flow_state == FlowState::UNDEFINED)
         {
-            return { path };
+            current_flow = setpoint_flow;
         }
 
-        auto target_flow = path.flow();
+        if (path.isTravel())
+        {
+            undefined_state_duration += path.totalDuration();
+            if (path.retract || undefined_state_duration > discretized_duration)
+            {
+                flow_state = FlowState::UNDEFINED;
+            }
+            return { path };
+        }
+        undefined_state_duration = 0;
+        setpoint_flow = path.setpoint_flow;
 
+        auto target_flow = path.flow();
         if (target_flow <= current_flow)
         {
             current_flow = target_flow;
@@ -361,6 +384,7 @@ struct GCodeState
 
         if (discretized_duration_remaining > 0.)
         {
+            flow_state = FlowState::TRANSITION;
             const auto discretized_segment_speed = current_flow / extrusion_volume_per_mm; // um^3/s / um^3/um = um/s
             const auto [partitioned_gcode_path, new_remaining_path, remaining_partition_duration]
                 = path.partition(discretized_duration_remaining, discretized_segment_speed, direction);
@@ -374,6 +398,10 @@ struct GCodeState
             {
                 return { partitioned_gcode_path };
             }
+        }
+        else
+        {
+            flow_state = FlowState::STABLE;
         }
 
         // while we have not reached the target flow, iteratively discretize the path
