@@ -25,7 +25,8 @@ class GradualFlowPlugin(BackendPlugin):
                 Logger.error(f"Could not find {constants.curaengine_plugin_name} binary at {self.binaryPath().as_posix()}")
             if platform.system() != "Windows" and self.binaryPath().exists():
                 st = os.stat(self.binaryPath())
-                os.chmod(self.binaryPath(), st.st_mode | stat.S_IEXEC)
+                if (st.st_mode & stat.S_IEXEC) == 0:
+                    os.chmod(self.binaryPath(), st.st_mode | stat.S_IEXEC)
 
             self._plugin_command = [self.binaryPath().as_posix()]
 
