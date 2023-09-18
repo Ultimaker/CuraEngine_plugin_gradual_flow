@@ -37,6 +37,7 @@ struct GCodePath
     double speed { targetSpeed() }; // um/s
     double flow_ { extrusionVolumePerMm() * speed }; // um/s
     double setpoint_flow { flow_ };
+    double total_length { totalLength() };
 
     double targetSpeed() const // um/s
     {
@@ -157,7 +158,7 @@ struct GCodePath
      */
     double totalDuration() const // s
     {
-        return totalLength() / speed;
+        return total_length / speed;
     }
 
     /*
@@ -173,7 +174,7 @@ struct GCodePath
      */
     std::tuple<GCodePath, std::optional<GCodePath>, double> partition(const double partition_duration, const double partition_speed, const utils::Direction direction) const
     {
-        const auto total_path_duration = totalLength() / partition_speed;
+        const auto total_path_duration = total_length / partition_speed;
         if (partition_duration >= total_path_duration)
         {
             const auto remaining_partition_duration = partition_duration - total_path_duration;
