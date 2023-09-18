@@ -50,5 +50,16 @@
         "settable_per_extruder": true
       }
     }
+  },
+  "machine_settings": {
+    "children": {
+      "reset_flow_duration": {
+        "value": 2.0,
+        "label": "Reset flow duration",
+        "description": "For any travel move longer than this value, the material flow is reset to the paths target flow",
+        "unit": "s",
+        "type": "float"
+      }
+    }
   }
 }

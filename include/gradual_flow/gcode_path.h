@@ -312,6 +312,7 @@ struct GCodeState
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
     double setpoint_flow{ 0.0 }; // um^3/s
+    double reset_flow_duration{ 0.0 }; // s
     FlowState flow_state{ FlowState::UNDEFINED };
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
@@ -367,7 +368,7 @@ struct GCodeState
 
         if (path.isTravel())
         {
-            if (path.isRetract() || path.totalDuration() > discretized_duration)
+            if (path.isRetract() || path.totalDuration() > reset_flow_duration)
             {
                 flow_state = FlowState::UNDEFINED;
             }

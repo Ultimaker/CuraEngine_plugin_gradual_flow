@@ -110,6 +110,7 @@ struct Generate
                         // next layer is the same as the target flow of the current layer
                         .target_end_flow = target_flow,
                         .setpoint_flow = target_flow,
+                        .reset_flow_duration = extruder_settings.reset_flow_duration,
                     };
 
                     const auto limited_flow_acceleration_paths = state.processGcodePaths(gcode_paths);
