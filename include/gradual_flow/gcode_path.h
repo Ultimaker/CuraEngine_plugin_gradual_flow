@@ -36,7 +36,6 @@ struct GCodePath
     geometry::polyline<> points;
     double speed { targetSpeed() }; // um/s
     double flow_ { extrusionVolumePerMm() * speed }; // um/s
-    bool retract { original_gcode_path_data->retract() };
     double setpoint_flow { flow_ };
 
     double targetSpeed() const // um/s
@@ -54,6 +53,16 @@ struct GCodePath
     bool isTravel() const
     {
         return targetFlow() <= 0;
+    }
+
+    /*
+     * Returns if the path is a retract move.
+     *
+     * @return `true` If the path is a retract move, `false` otherwise
+     */
+    bool isRetract() const
+    {
+        return original_gcode_path_data->retract();
     }
 
     /*
@@ -359,7 +368,7 @@ struct GCodeState
         if (path.isTravel())
         {
             undefined_state_duration += path.totalDuration();
-            if (path.retract || undefined_state_duration > discretized_duration)
+            if (path.isRetract() || undefined_state_duration > discretized_duration)
             {
                 flow_state = FlowState::UNDEFINED;
             }
