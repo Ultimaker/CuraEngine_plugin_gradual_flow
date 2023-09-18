@@ -109,7 +109,6 @@ struct Generate
                         // not be correct, but it is safe to assume the target flow for the
                         // next layer is the same as the target flow of the current layer
                         .target_end_flow = target_flow,
-                        .setpoint_flow = target_flow,
                         .reset_flow_duration = extruder_settings.reset_flow_duration,
                     };
 

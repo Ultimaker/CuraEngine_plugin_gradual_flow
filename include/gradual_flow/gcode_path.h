@@ -36,7 +36,6 @@ struct GCodePath
     geometry::polyline<> points;
     double speed { targetSpeed() }; // um/s
     double flow_ { extrusionVolumePerMm() * speed }; // um/s
-    double setpoint_flow { flow_ };
     double total_length { totalLength() };
 
     double targetSpeed() const // um/s
@@ -311,7 +310,6 @@ struct GCodeState
     double discretized_duration{ 0.0 }; // s
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
-    double setpoint_flow{ 0.0 }; // um^3/s
     double reset_flow_duration{ 0.0 }; // s
     FlowState flow_state{ FlowState::UNDEFINED };
 
@@ -361,20 +359,23 @@ struct GCodeState
      */
     std::vector<GCodePath> processGcodePath(const GCodePath& path, const utils::Direction direction)
     {
-        if (flow_state == FlowState::UNDEFINED)
-        {
-            current_flow = setpoint_flow;
-        }
-
         if (path.isTravel())
         {
-            if (path.isRetract() || path.totalDuration() > reset_flow_duration)
+            if (path.isRetract() || path.totalDuration() > reset_flow_duration * 0.1)
             {
                 flow_state = FlowState::UNDEFINED;
             }
+            else
+            {
+                flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
+            }
             return { path };
         }
-        setpoint_flow = path.setpoint_flow;
+
+        if (flow_state == FlowState::UNDEFINED && direction == utils::Direction::Forward)
+        {
+            current_flow = path.targetFlow();
+        }
 
         auto target_flow = path.flow();
         if (target_flow <= current_flow)
@@ -447,8 +448,6 @@ struct GCodeState
             }
         }
         discretized_paths.emplace_back(remaining_path);
-
-        flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
 
         return discretized_paths;
     }
