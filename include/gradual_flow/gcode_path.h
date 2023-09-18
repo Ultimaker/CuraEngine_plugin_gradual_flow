@@ -358,14 +358,12 @@ struct GCodeState
 
         if (path.isTravel())
         {
-            undefined_state_duration += path.totalDuration();
-            if (path.retract || undefined_state_duration > discretized_duration)
+            if (path.retract || path.totalDuration() > discretized_duration)
             {
                 flow_state = FlowState::UNDEFINED;
             }
             return { path };
         }
-        undefined_state_duration = 0;
         setpoint_flow = path.setpoint_flow;
 
         auto target_flow = path.flow();
