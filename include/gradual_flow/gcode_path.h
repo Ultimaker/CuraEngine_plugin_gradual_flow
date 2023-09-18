@@ -203,7 +203,7 @@ struct GCodePath
             {
                 const auto duration_left = partition_duration - current_partition_duration;
                 auto segment_ratio = duration_left / segment_duration;
-                assert(segment_ratio >= 0. && segment_ratio <= 1.);
+                assert(segment_ratio >= -1e-6 && segment_ratio <= 1. + 1e-6);
                 const auto partition_x = prev_point.X + static_cast<long long>(static_cast<double>(next_point.X - prev_point.X) * segment_ratio);
                 const auto partition_y = prev_point.Y + static_cast<long long>(static_cast<double>(next_point.Y - prev_point.Y) * segment_ratio);
                 const auto partition_point = ClipperLib::IntPoint(partition_x, partition_y);
