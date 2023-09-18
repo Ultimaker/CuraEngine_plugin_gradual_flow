@@ -273,11 +273,11 @@ TEST_CASE("flow limit forward backward target speed reached")
     plugin::gradual_flow::GCodeState state
     {
         .current_flow = paths.front().flow(),
-        .setpoint_flow = paths.front().flow(),
         .flow_acceleration = flow_acceleration,
         .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
+        .setpoint_flow = paths.front().flow(),
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
