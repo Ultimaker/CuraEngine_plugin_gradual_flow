@@ -312,7 +312,6 @@ struct GCodeState
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
     double setpoint_flow{ 0.0 }; // um^3/s
-    double undefined_state_duration{ 0.0 }; // s
     FlowState flow_state{ FlowState::UNDEFINED };
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
