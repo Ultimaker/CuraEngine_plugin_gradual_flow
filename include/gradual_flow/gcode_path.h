@@ -384,7 +384,6 @@ struct GCodeState
 
         if (discretized_duration_remaining > 0.)
         {
-            flow_state = FlowState::TRANSITION;
             const auto discretized_segment_speed = current_flow / extrusion_volume_per_mm; // um^3/s / um^3/um = um/s
             const auto [partitioned_gcode_path, new_remaining_path, remaining_partition_duration]
                 = path.partition(discretized_duration_remaining, discretized_segment_speed, direction);
@@ -398,10 +397,6 @@ struct GCodeState
             {
                 return { partitioned_gcode_path };
             }
-        }
-        else
-        {
-            flow_state = FlowState::STABLE;
         }
 
         // while we have not reached the target flow, iteratively discretize the path
@@ -444,6 +439,9 @@ struct GCodeState
             }
         }
         discretized_paths.emplace_back(remaining_path);
+
+        flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
+
         return discretized_paths;
     }
 };
