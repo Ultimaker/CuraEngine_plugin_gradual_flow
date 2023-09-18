@@ -372,6 +372,7 @@ struct GCodeState
             return { path };
         }
 
+        // After a long travel move we want to reset the flow to the target end flow
         if (flow_state == FlowState::UNDEFINED && direction == utils::Direction::Forward)
         {
             current_flow = path.targetFlow();
