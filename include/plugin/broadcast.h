@@ -55,6 +55,7 @@ struct Broadcast
             }
             catch (const std::exception& e)
             {
+                spdlog::error("Failed to parse broadcast settings request: {}", e.what());
                 status = grpc::Status(grpc::StatusCode::INTERNAL, e.what());
             }
             if (! status.ok())
