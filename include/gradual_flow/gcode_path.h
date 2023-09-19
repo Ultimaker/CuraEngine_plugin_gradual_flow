@@ -41,8 +41,7 @@ struct GCodePath
     double targetSpeed() const // um/s
     {
         return original_gcode_path_data->speed_derivatives().velocity() *
-               original_gcode_path_data->speed_factor() *
-               original_gcode_path_data->speed_back_pressure_factor() * 1e3;
+               original_gcode_path_data->speed_factor() * 1e3;
     }
 
     /*
@@ -72,7 +71,7 @@ struct GCodePath
      */
     double extrusionVolumePerMm() const // um^3/um
     {
-        return original_gcode_path_data->flow() * original_gcode_path_data->width_factor() * original_gcode_path_data->line_width()
+        return original_gcode_path_data->flow() * original_gcode_path_data->line_width()
              * original_gcode_path_data->layer_thickness() * original_gcode_path_data->flow_ratio();
     }
 
@@ -361,13 +360,9 @@ struct GCodeState
     {
         if (path.isTravel())
         {
-            if (path.isRetract() || path.totalDuration() > reset_flow_duration * 0.1)
+            if (path.isRetract() || path.totalDuration() > reset_flow_duration)
             {
                 flow_state = FlowState::UNDEFINED;
-            }
-            else
-            {
-                flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
             }
             return { path };
         }
