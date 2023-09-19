@@ -50,7 +50,7 @@ TEST_CASE("segment duration long line")
         .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
-        .setpoint_flow = 0.,
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -78,7 +78,7 @@ TEST_CASE("Total length remains same")
         .flow_acceleration = 1000000000.,
         .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
-        .setpoint_flow = 0.,
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -114,7 +114,7 @@ TEST_CASE("Total length remains same short line segments")
         .flow_acceleration = 1000000000.,
         .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
-        .setpoint_flow = 0.,
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -152,7 +152,7 @@ TEST_CASE("segment duration small segments")
         .flow_deceleration = 1000000000.,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
-        .setpoint_flow = 0.,
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -194,7 +194,7 @@ TEST_CASE("forward discretization steps")
         .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = path.targetFlow(),
-        .setpoint_flow = initial_flow,
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths({ path });
@@ -231,7 +231,7 @@ TEST_CASE("discretization steps backward")
         .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = path_slow.targetFlow(),
-        .setpoint_flow = path_fast.flow(),
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
@@ -277,7 +277,7 @@ TEST_CASE("flow limit forward backward target speed reached")
         .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
-        .setpoint_flow = paths.front().flow(),
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
@@ -322,7 +322,7 @@ TEST_CASE("flow limit forward backward target speed not reached")
         .flow_deceleration = flow_acceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
-        .setpoint_flow = paths.front().flow(),
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
@@ -366,7 +366,7 @@ TEST_CASE("flow deceleration")
         .flow_deceleration = flow_deceleration,
         .discretized_duration = discretized_duration,
         .target_end_flow = paths.back().targetFlow(),
-        .setpoint_flow = paths.front().flow(),
+        .flow_state = plugin::gradual_flow::FlowState::STABLE,
     };
 
     const auto limited_flow_acceleration_paths = state.processGcodePaths(paths);
