@@ -26,7 +26,7 @@ struct Settings
     std::vector<double> max_flow_acceleration;
     std::vector<double> layer_0_max_flow_acceleration;
     std::vector<double> gradual_flow_discretisation_step_size;
-    double reset_flow_duration;
+    double reset_flow_duration { 0.0};
 
     explicit Settings(const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& request, const std::shared_ptr<Metadata>& metadata)
         : metadata{ metadata }
