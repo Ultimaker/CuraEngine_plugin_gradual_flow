@@ -23,18 +23,25 @@
 namespace plugin::gradual_flow
 {
 
+enum class FlowState
+{
+    STABLE,
+    TRANSITION,
+    UNDEFINED
+};
+
 struct GCodePath
 {
     const cura::plugins::v0::GCodePath* original_gcode_path_data;
     geometry::polyline<> points;
-    double speed = targetSpeed(); // um/s
-    double flow_ = extrusionVolumePerMm() * speed; // um/s
+    double speed { targetSpeed() }; // um/s
+    double flow_ { extrusionVolumePerMm() * speed }; // um/s
+    double total_length { totalLength() }; // um
 
     double targetSpeed() const // um/s
     {
         return original_gcode_path_data->speed_derivatives().velocity() *
-               original_gcode_path_data->speed_factor() *
-               original_gcode_path_data->speed_back_pressure_factor() * 1e3;
+               original_gcode_path_data->speed_factor() * 1e3;
     }
 
     /*
@@ -48,13 +55,23 @@ struct GCodePath
     }
 
     /*
+     * Returns if the path is a retract move.
+     *
+     * @return `true` If the path is a retract move, `false` otherwise
+     */
+    bool isRetract() const
+    {
+        return original_gcode_path_data->retract();
+    }
+
+    /*
      * Returns the extrusion volume per um of the path.
      *
      * @return The extrusion volume per um of the path in um^3/um
      */
     double extrusionVolumePerMm() const // um^3/um
     {
-        return original_gcode_path_data->flow() * original_gcode_path_data->width_factor() * original_gcode_path_data->line_width()
+        return original_gcode_path_data->flow() * original_gcode_path_data->line_width()
              * original_gcode_path_data->layer_thickness() * original_gcode_path_data->flow_ratio();
     }
 
@@ -139,7 +156,7 @@ struct GCodePath
      */
     double totalDuration() const // s
     {
-        return totalLength() / speed;
+        return total_length / speed;
     }
 
     /*
@@ -155,7 +172,7 @@ struct GCodePath
      */
     std::tuple<GCodePath, std::optional<GCodePath>, double> partition(const double partition_duration, const double partition_speed, const utils::Direction direction) const
     {
-        const auto total_path_duration = totalLength() / partition_speed;
+        const auto total_path_duration = total_length / partition_speed;
         if (partition_duration >= total_path_duration)
         {
             const auto remaining_partition_duration = partition_duration - total_path_duration;
@@ -184,7 +201,7 @@ struct GCodePath
             {
                 const auto duration_left = partition_duration - current_partition_duration;
                 auto segment_ratio = duration_left / segment_duration;
-                assert(segment_ratio >= 0. && segment_ratio <= 1.);
+                assert(segment_ratio >= -1e-6 && segment_ratio <= 1. + 1e-6);
                 const auto partition_x = prev_point.X + static_cast<long long>(static_cast<double>(next_point.X - prev_point.X) * segment_ratio);
                 const auto partition_y = prev_point.Y + static_cast<long long>(static_cast<double>(next_point.Y - prev_point.Y) * segment_ratio);
                 const auto partition_point = ClipperLib::IntPoint(partition_x, partition_y);
@@ -292,6 +309,8 @@ struct GCodeState
     double discretized_duration{ 0.0 }; // s
     double discretized_duration_remaining{ 0.0 }; // s
     double target_end_flow{ 0.0 }; // um^3/s
+    double reset_flow_duration{ 0.0 }; // s
+    FlowState flow_state{ FlowState::UNDEFINED };
 
     std::vector<GCodePath> processGcodePaths(const std::vector<GCodePath>& gcode_paths)
     {
@@ -341,15 +360,25 @@ struct GCodeState
     {
         if (path.isTravel())
         {
+            if (path.isRetract() || path.totalDuration() > reset_flow_duration)
+            {
+                flow_state = FlowState::UNDEFINED;
+            }
             return { path };
         }
 
-        auto target_flow = path.flow();
+        // After a long travel move we want to reset the flow to the target end flow
+        if (flow_state == FlowState::UNDEFINED && direction == utils::Direction::Forward)
+        {
+            current_flow = path.targetFlow();
+        }
 
+        auto target_flow = path.flow();
         if (target_flow <= current_flow)
         {
             current_flow = target_flow;
             discretized_duration_remaining = 0;
+            flow_state = FlowState::STABLE;
             return { path };
         }
 
@@ -372,6 +401,7 @@ struct GCodeState
             }
             else
             {
+                flow_state = FlowState::TRANSITION;
                 return { partitioned_gcode_path };
             }
         }
@@ -390,6 +420,7 @@ struct GCodeState
             {
                 remaining_path.speed = segment_speed;
                 discretized_duration_remaining = std::max(discretized_duration_remaining - remaining_path.totalDuration(), .0);
+                flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
                 discretized_paths.emplace_back(remaining_path);
                 return discretized_paths;
             }
@@ -411,11 +442,15 @@ struct GCodeState
             }
             else
             {
+                flow_state = FlowState::TRANSITION;
                 discretized_duration_remaining = remaining_partition_duration;
                 return discretized_paths;
             }
         }
         discretized_paths.emplace_back(remaining_path);
+
+        flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
+
         return discretized_paths;
     }
 };

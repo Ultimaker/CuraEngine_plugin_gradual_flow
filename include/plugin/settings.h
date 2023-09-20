@@ -26,6 +26,7 @@ struct Settings
     std::vector<double> max_flow_acceleration;
     std::vector<double> layer_0_max_flow_acceleration;
     std::vector<double> gradual_flow_discretisation_step_size;
+    double reset_flow_duration { 0.0};
 
     explicit Settings(const cura::plugins::slots::broadcast::v0::BroadcastServiceSettingsRequest& request, const std::shared_ptr<Metadata>& metadata)
         : metadata{ metadata }
@@ -60,6 +61,7 @@ struct Settings
             layer_0_max_flow_acceleration.emplace_back(std::stod(layer_0_max_flow_acceleration_setting.value()) * 1e9);
             gradual_flow_discretisation_step_size.emplace_back(std::stod(gradual_flow_discretisation_step_size_setting.value()));
         }
+        reset_flow_duration = std::stod(retrieveSettings("reset_flow_duration", request, metadata).value());
     }
 
     [[maybe_unused]] static std::optional<std::string> retrieveSettings(const std::string& settings_key, const cura::plugins::slots::broadcast::v0::Settings& settings, const auto& metadata)
