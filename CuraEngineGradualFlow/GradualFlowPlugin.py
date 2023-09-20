@@ -52,11 +52,11 @@ class GradualFlowPlugin(BackendPlugin):
 
     def binaryPath(self) -> Path:
         ext = ".exe" if platform.system() == "Windows" else ""
-        # plugins = CuraApplication.getInstance().getPluginRegistry()
-        # if plugins.isBundledPlugin(self.getPluginId()):
-        return Path(CuraApplication.getInstance().getAppFolderPrefix()).joinpath(f"{constants.curaengine_plugin_name}{ext}").resolve()
+        service_path = Path(CuraApplication.getInstance().getAppFolderPrefix()).joinpath(f"{constants.curaengine_plugin_name}{ext}").resolve()
+        if service_path.exists():
+            return service_path
 
-        # machine = platform.machine()
-        # if machine == "AMD64":
-        #     machine = "x86_64"
-        # return Path(__file__).parent.joinpath(machine, platform.system(), f"{constants.curaengine_plugin_name}{ext}").resolve()
+        machine = platform.machine()
+        if machine == "AMD64":
+            machine = "x86_64"
+        return Path(__file__).parent.joinpath(machine, platform.system(), f"{constants.curaengine_plugin_name}{ext}").resolve()
