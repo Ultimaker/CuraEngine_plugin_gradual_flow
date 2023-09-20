@@ -70,7 +70,7 @@ struct Generate
                         {
                             points.emplace_back(ClipperLib::IntPoint{ point.x(), point.y() });
                         }
-                        gcode_paths.emplace_back(GCodePath{.original_gcode_path_data = &path, .points = points});
+                        gcode_paths.emplace_back(GCodePath{ .original_gcode_path_data = &path, .points = points });
                     }
 
                     /* Process remaining paths

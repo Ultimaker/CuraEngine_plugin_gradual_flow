@@ -36,7 +36,7 @@ struct GCodePath
     geometry::polyline<> points;
     double speed { targetSpeed() }; // um/s
     double flow_ { extrusionVolumePerMm() * speed }; // um/s
-    double total_length { totalLength() };
+    double total_length { totalLength() }; // um
 
     double targetSpeed() const // um/s
     {
