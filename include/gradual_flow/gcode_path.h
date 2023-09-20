@@ -378,6 +378,7 @@ struct GCodeState
         {
             current_flow = target_flow;
             discretized_duration_remaining = 0;
+            flow_state = FlowState::STABLE;
             return { path };
         }
 
@@ -400,6 +401,7 @@ struct GCodeState
             }
             else
             {
+                flow_state = FlowState::TRANSITION;
                 return { partitioned_gcode_path };
             }
         }
@@ -418,6 +420,7 @@ struct GCodeState
             {
                 remaining_path.speed = segment_speed;
                 discretized_duration_remaining = std::max(discretized_duration_remaining - remaining_path.totalDuration(), .0);
+                flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
                 discretized_paths.emplace_back(remaining_path);
                 return discretized_paths;
             }
@@ -439,11 +442,14 @@ struct GCodeState
             }
             else
             {
+                flow_state = FlowState::TRANSITION;
                 discretized_duration_remaining = remaining_partition_duration;
                 return discretized_paths;
             }
         }
         discretized_paths.emplace_back(remaining_path);
+
+        flow_state = discretized_duration_remaining > 0. ? FlowState::TRANSITION : FlowState::STABLE;
 
         return discretized_paths;
     }
