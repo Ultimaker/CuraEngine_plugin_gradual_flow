@@ -224,7 +224,6 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
         copy(self, pattern=f"bundled_{self._cura_plugin_name}.json", dst=os.path.join(self.package_folder, "res", "bundled_packages"), src=os.path.join(self.source_folder, self._cura_plugin_name))
         copy(self, pattern="*", dst=os.path.join(self.package_folder, "res", "plugins", self._cura_plugin_name), src=os.path.join(self.source_folder, self._cura_plugin_name))
-        copy(self, pattern=f"curaengine_plugin_gradual_flow{ext}", dst=os.path.join(self.package_folder, "res", "plugins", self._cura_plugin_name, {"armv8": "arm64"}.get(str(self.settings.arch), str(self.settings.arch)), {"Macos": "Darwin"}.get(str(self.settings.os), str(self.settings.os))), src=os.path.join(self.build_folder))
 
     def deploy(self):
         ext = ".exe" if self.settings.os == "Windows" else ""
