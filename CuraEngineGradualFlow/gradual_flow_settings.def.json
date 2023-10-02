@@ -1,5 +1,5 @@
 {
-  "material_flow": {
+  "material": {
     "children": {
       "gradual_flow_enabled": {
         "label": "Gradual flow enabled",
