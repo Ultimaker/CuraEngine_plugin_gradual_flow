@@ -38,7 +38,7 @@ class GradualFlowPlugin(BackendPlugin):
 
     def usePlugin(self):
         machine_manager = CuraApplication.getInstance().getMachineManager()
-        return any([extr.getProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value") for extr in machine_manager.activeMachine.extruderList if extr.hasProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value")])
+        return any([extr.getProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value") for extr in machine_manager.activeMachine.extruderList if machine_manager.activeMachine is not None and extr.hasProperty(f"{constants.settings_prefix}_gradual_flow_enabled", "value")])
 
     def getPort(self):
         return super().getPort() if not self.isDebug() else int(os.environ["CURAENGINE_GCODE_PATHS_MODIFY_PORT"])
