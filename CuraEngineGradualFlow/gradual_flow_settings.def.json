@@ -17,6 +17,7 @@
         "unit": "mm\u00b3\/s\u00b2",
         "default_value": 1,
         "minimum_value_warning": 0.1,
+        "maximum_value_warning": 99999,
         "minimum_value": 0.01,
         "settable_per_mesh": false,
         "settable_per_extruder": true,
@@ -31,6 +32,7 @@
         "unit": "mm\u00b3\/s\u00b2",
         "default_value": 1,
         "minimum_value_warning": 0.1,
+        "maximum_value_warning": 99999,
         "minimum_value": 0.01,
         "settable_per_mesh": false,
         "settable_per_extruder": true
