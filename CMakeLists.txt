@@ -9,7 +9,7 @@ find_package(asio-grpc REQUIRED)
 find_package(range-v3 REQUIRED)
 find_package(clipper REQUIRED)
 find_package(ctre REQUIRED)
-find_package(neargye-semver REQUIRED)
+find_package(semver REQUIRED)
 find_package(curaengine_grpc_definitions REQUIRED)
 
 set(HDRS include/gradual_flow/boost_tags.h
@@ -37,7 +37,7 @@ target_include_directories(curaengine_plugin_gradual_flow_lib
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         )
 
-set(DEPS curaengine_grpc_definitions::curaengine_grpc_definitions clipper::clipper ctre::ctre asio-grpc::asio-grpc protobuf::libprotobuf boost::boost spdlog::spdlog docopt_s range-v3::range-v3 neargye-semver::neargye-semver)
+set(DEPS curaengine_grpc_definitions::curaengine_grpc_definitions clipper::clipper ctre::ctre asio-grpc::asio-grpc protobuf::libprotobuf boost::boost spdlog::spdlog docopt_s range-v3::range-v3 semver::semver)
 
 target_link_libraries(curaengine_plugin_gradual_flow PUBLIC curaengine_plugin_gradual_flow_lib ${DEPS})
 
