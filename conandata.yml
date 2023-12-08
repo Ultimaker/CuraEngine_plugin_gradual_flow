@@ -1,0 +1,3 @@
+version: "0.1.0-beta.2"
+requirements:
+    - "curaengine_grpc_definitions/(latest)@ultimaker/cura_10831"
