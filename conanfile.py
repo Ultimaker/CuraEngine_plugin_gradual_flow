@@ -5,7 +5,7 @@ from conan.errors import ConanInvalidConfiguration
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.env import VirtualBuildEnv
-from conan.tools.files import copy
+from conan.tools.files import copy, update_conandata
 from conan.tools.microsoft import check_min_vs, is_msvc_static_runtime, is_msvc
 from conan.tools.scm import Version
 
@@ -35,7 +35,7 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
 
     def set_version(self):
         if not self.version:
-            self.version = "0.1.0"
+            self.version = self.conan_data["version"]
 
     @property
     def _min_cppstd(self):
@@ -136,6 +136,9 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     website=self.url,
                                     website_author=self.homepage))
 
+    def export(self):
+        update_conandata(self, {"version": self.version})
+
     def export_sources(self):
         copy(self, "CMakeLists.txt", self.recipe_folder, self.export_sources_folder)
         copy(self, "*.jinja", os.path.join(self.recipe_folder, "templates"), os.path.join(self.export_sources_folder, "templates"))
@@ -160,6 +163,8 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
                                     os.path.join("res", "bundled_packages").replace("\\", "/")]
 
     def requirements(self):
+        for req in self.conan_data["requirements"]:
+            self.requires(req)
         self.requires("protobuf/3.21.9")
         self.requires("boost/1.82.0")
         self.requires("asio-grpc/2.6.0")
@@ -171,7 +176,6 @@ class CuraEngineGradualFlowPluginConan(ConanFile):
         self.requires("clipper/6.4.2")
         self.requires("ctre/3.7.2")
         self.requires("neargye-semver/0.3.0")
-        self.requires("curaengine_grpc_definitions/0.1.0")
 
     def build_requirements(self):
         self.test_requires("standardprojectsettings/[>=0.1.0]@ultimaker/stable")
