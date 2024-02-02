@@ -109,8 +109,8 @@ jobs:
 
       - uses: fieldOfView/cura-plugin-packager-action@main
         with:
-          source_folder: "cura-plugin/CuraEngineGradualFlow"
-          package_info_path: "cura-plugin/CuraEngineGradualFlow/package.json"
+          source_folder: "cura-plugin/plugins/CuraEngineGradualFlow"
+          package_info_path: "cura-plugin/plugins/CuraEngineGradualFlow/package.json"
 
       - name: Upload the Cura package
         uses: actions/upload-artifact@v3
