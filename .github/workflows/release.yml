@@ -63,7 +63,7 @@ jobs:
       - name: Download the run info
         uses: actions/download-artifact@v2
         with:
-          name: macos-run-info
+          name: linux-run-info
 
       - name: Set the run info as environment variables
         run: |
@@ -72,7 +72,7 @@ jobs:
       - name: Download the Cura plugin
         uses: actions/download-artifact@v2
         with:
-          name: macos-cura-plugin
+          name: linux-cura-plugin
           path: cura-plugin
 
       - name: Download linux modern binary artifacts
@@ -109,8 +109,8 @@ jobs:
 
       - uses: fieldOfView/cura-plugin-packager-action@main
         with:
-          source_folder: "cura-plugin/CuraEngineGradualFlow"
-          package_info_path: "cura-plugin/CuraEngineGradualFlow/package.json"
+          source_folder: "cura-plugin/plugins/CuraEngineGradualFlow"
+          package_info_path: "cura-plugin/plugins/CuraEngineGradualFlow/package.json"
 
       - name: Upload the Cura package
         uses: actions/upload-artifact@v3
