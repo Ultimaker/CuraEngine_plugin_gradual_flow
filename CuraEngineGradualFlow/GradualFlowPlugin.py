@@ -13,12 +13,12 @@ from cura.CuraApplication import CuraApplication
 from . import constants
 
 
-catalog = i18nCatalog("curaengine_plugin_gradual_flow")
+catalog = i18nCatalog("gradual_flow_settings.def.json")
 
 
 class GradualFlowPlugin(BackendPlugin):
     def __init__(self):
-        super().__init__()
+        super().__init__(catalog)
         self.definition_file_paths = [Path(__file__).parent.joinpath("gradual_flow_settings.def.json").as_posix()]
         if not self.isDebug():
             if not self.binaryPath().exists():
