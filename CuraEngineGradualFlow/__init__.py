@@ -5,7 +5,7 @@ import platform
 from UM.i18n import i18nCatalog
 
 
-catalog = i18nCatalog("curaengine_plugin_gradual_flow")
+catalog = i18nCatalog("gradual_flow_settings.def.json")
 
 from . import constants
 
