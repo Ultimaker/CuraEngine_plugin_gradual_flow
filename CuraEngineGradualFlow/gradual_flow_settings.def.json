@@ -21,7 +21,7 @@
         "minimum_value": 0.01,
         "settable_per_mesh": false,
         "settable_per_extruder": true,
-        "comment": "when enabled, each second the flow will at max be increased/decreased by this value"
+        "comments": "when enabled, each second the flow will at max be increased/decreased by this value"
       },
       "layer_0_max_flow_acceleration": {
         "enabled": "gradual_flow_enabled",
